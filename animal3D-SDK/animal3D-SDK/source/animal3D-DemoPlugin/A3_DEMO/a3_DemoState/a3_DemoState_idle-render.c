@@ -275,7 +275,7 @@ void a3demo_render_main(const a3_DemoState *demoState,
 
 	// ****TO-DO: 
 	//	-> 5a. list drawables for scene objects
-	/*
+	
 	// temp drawable pointers
 	const a3_VertexDrawable *drawable[] = {
 		demoState->draw_plane,
@@ -284,7 +284,7 @@ void a3demo_render_main(const a3_DemoState *demoState,
 		demoState->draw_torus,
 		demoState->draw_teapot,
 	};
-	*/
+	
 
 
 	//-------------------------------------------------------------------------
@@ -300,7 +300,7 @@ void a3demo_render_main(const a3_DemoState *demoState,
 
 	// ****TO-DO: 
 	//	-> 5b. render skybox or clear buffers
-	/*
+	
 	// skybox or regular clear
 	glDisable(GL_BLEND);
 	if (demoState->displaySkybox)
@@ -330,12 +330,12 @@ void a3demo_render_main(const a3_DemoState *demoState,
 		//	skybox will draw over everything otherwise
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
-	*/
+	
 
 
 	// ****TO-DO: 
 	//	-> 5c. render grid
-	/*
+	
 	// draw grid aligned to world
 	if (demoState->displayGrid)
 	{
@@ -348,7 +348,7 @@ void a3demo_render_main(const a3_DemoState *demoState,
 		a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uColor, 1, demoState->gridColor.v);
 		a3vertexDrawableActivateAndRender(currentDrawable);
 	}
-	*/
+	
 
 
 	// support multiple geometry passes
@@ -361,7 +361,7 @@ void a3demo_render_main(const a3_DemoState *demoState,
 		case 0: {
 			// ****TO-DO: 
 			//	-> 5d. render objects
-			/*
+			
 			// select program based on settings
 			currentDemoProgram = demoState->prog_drawColorUnif;
 			a3shaderProgramActivate(currentDemoProgram->program);
@@ -393,7 +393,7 @@ void a3demo_render_main(const a3_DemoState *demoState,
 				currentDrawable = drawable[k];
 				a3vertexDrawableActivateAndRender(currentDrawable);
 			}
-			*/
+			
 		}	break;
 			// end geometry pass
 		}
