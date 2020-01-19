@@ -29,9 +29,11 @@
 //	2) assign uniform variable to output color
 
 out vec4 rtFragColor;
+uniform vec4 uColor;
 
 void main()
 {
 	// DUMMY OUTPUT: all fragments are OPAQUE WHITE
-	rtFragColor = vec4(1.0, 1.0, 1.0, 1.0);
+	// rtFragColor = vec4(1.0, 1.0, 1.0, 1.0);
+	rtFragColor = uColor*vec4(1.0, 1.0, 1.0, 1.0);
 }
