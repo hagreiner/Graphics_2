@@ -418,7 +418,7 @@ void a3demo_render_main(const a3_DemoState *demoState,
 
 	// ****TO-DO: 
 	//	-> 5e. render coordinate axes
-	/*
+	
 	// superimpose axes
 	// draw coordinate axes in front of everything
 	currentDemoProgram = demoState->prog_drawColorAttrib;
@@ -449,7 +449,7 @@ void a3demo_render_main(const a3_DemoState *demoState,
 			a3vertexDrawableRenderActive();
 		}
 	}
-	*/
+	
 
 
 	// pipeline
