@@ -39,5 +39,6 @@ void main()
 {
 	// DUMMY OUTPUT: all fragments are OPAQUE WHITE
 	//rtFragColor = vec4(1.0, 1.0, 1.0, 1.0);
-	rtFragColor = vec4(1.0, 1.0, 1.0, 1.0);
+	rtFragColor = texture(uTex_dm, vTexture);
 }
+ //https://www.khronos.org/opengl/wiki/Sampler_(GLSL)
