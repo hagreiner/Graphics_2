@@ -292,13 +292,13 @@ extern "C"
 					prog_drawColorUnif[1];						// draw uniform color
 				// ****TO-DO: 
 				//	-> 2.1a: new program declarations
-				/*
+				
 				a3_DemoStateShaderProgram
 					prog_drawNonphoto_multi[1],					// draw non-photorealistic shading model, multiple lights
 					prog_drawPhong_multi[1],					// draw Phong shading model, multiple lights
 					prog_drawLambert_multi[1],					// draw Lambert shading model, multiple lights
 					prog_drawTexture[1];						// draw texture
-				*/
+				
 			};
 		};
 
