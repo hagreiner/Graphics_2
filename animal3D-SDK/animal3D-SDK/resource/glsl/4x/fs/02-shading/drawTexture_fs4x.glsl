@@ -33,7 +33,7 @@
 out vec4 rtFragColor;
 
 uniform sampler2D uTex_dm; //1
-in mat4 vTexture; //2
+in vec2 vTexture; //2
 
 void main()
 {

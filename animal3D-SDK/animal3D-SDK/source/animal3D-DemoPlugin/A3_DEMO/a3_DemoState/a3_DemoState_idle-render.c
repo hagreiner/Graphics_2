@@ -338,13 +338,13 @@ void a3demo_render_main(const a3_DemoState *demoState,
 
 	// ****TO-DO: 
 	//	-> 3.1b: convenient arrays of lighting data
-	/*
+	
 	// tmp lighting data
 	a3f32 lightSz[demoStateMaxCount_lightObject];
 	a3f32 lightSzInvSq[demoStateMaxCount_lightObject];
 	a3vec4 lightPos[demoStateMaxCount_lightObject];
 	a3vec4 lightCol[demoStateMaxCount_lightObject];
-	*/
+	
 
 
 	//-------------------------------------------------------------------------
@@ -411,7 +411,7 @@ void a3demo_render_main(const a3_DemoState *demoState,
 
 	// ****TO-DO: 
 	//	-> 3.1c: update lighting data
-	/*
+	
 	// copy temp light data
 	for (k = 0, pointLight = demoState->forwardPointLight;
 		k < demoState->forwardLightCount;
@@ -422,7 +422,7 @@ void a3demo_render_main(const a3_DemoState *demoState,
 		lightPos[k] = pointLight->viewPos;
 		lightCol[k] = pointLight->color;
 	}
-	*/
+	
 
 
 	// support multiple geometry passes
@@ -453,7 +453,7 @@ void a3demo_render_main(const a3_DemoState *demoState,
 			a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uColor, 1, skyblue);
 			// ****TO-DO: 
 			//	-> 3.1d: upload of uniform lighting data
-			/*
+			
 			a3shaderUniformSendInt(a3unif_single, currentDemoProgram->uLightCt, 1, &demoState->forwardLightCount);
 			a3shaderUniformSendFloat(a3unif_single, currentDemoProgram->uLightSz, demoState->forwardLightCount, lightSz);
 			a3shaderUniformSendFloat(a3unif_single, currentDemoProgram->uLightSzInvSq, demoState->forwardLightCount, lightSzInvSq);
@@ -461,7 +461,7 @@ void a3demo_render_main(const a3_DemoState *demoState,
 			a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uLightCol, demoState->forwardLightCount, lightCol->v);
 			a3textureActivate(demoState->tex_ramp_dm, a3tex_unit04);
 			a3textureActivate(demoState->tex_ramp_sm, a3tex_unit05);
-			*/
+			
 
 			// individual object requirements: 
 			//	- modelviewprojection

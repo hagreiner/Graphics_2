@@ -32,9 +32,13 @@
 //	Note: test all data and inbound values before using them!
 
 out vec4 rtFragColor;
+//uniform sampler2D uTex_dm; //1
+//uniform vec3 uLightPos; //2
+in vec4 vData;
 
 void main()
 {
 	// DUMMY OUTPUT: all fragments are OPAQUE RED
 	rtFragColor = vec4(1.0, 0.0, 0.0, 1.0);
+	//rtFragColor = uTex_dm * uLightPos;
 }
