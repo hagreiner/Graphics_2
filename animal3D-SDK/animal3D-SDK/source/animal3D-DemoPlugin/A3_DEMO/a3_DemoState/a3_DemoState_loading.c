@@ -456,7 +456,7 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			// 02-shading
 			{ { { 0 },	"shdr-fs:draw-tex",					a3shader_fragment,	1,{ A3_DEMO_FS"02-shading/drawTexture_fs4x.glsl" } } },
 			{ { { 0 },	"shdr-fs:draw-Lambert-multi",		a3shader_fragment,	1,{ A3_DEMO_FS"02-shading/drawLambert_multi_fs4x.glsl" } } },
-			{ { { 0 },	"shdr-fs:draw-Phong-multi",			a3shader_fragment,	1,{ A3_DEMO_FS"02-shading/e/drawPhong_multi_fs4x.glsl" } } },
+			{ { { 0 },	"shdr-fs:draw-Phong-multi",			a3shader_fragment,	1,{ A3_DEMO_FS"02-shading/drawPhong_multi_fs4x.glsl" } } },
 			{ { { 0 },	"shdr-fs:draw-nonphoto-multi",		a3shader_fragment,	1,{ A3_DEMO_FS"02-shading/e/drawNonphoto_multi_fs4x.glsl" } } },
 		}
 	};
@@ -529,13 +529,13 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 	
 	// ****TO-DO: 
 	//	-> 4.1b: Phong shading program initialization
-	/*
+	
 	// Phong shading program
 	currentDemoProg = demoState->prog_drawPhong_multi;
 	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-Phong-multi");
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passLightingData_transform_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawPhong_multi_fs->shader);
-	*/
+	
 	// ****TO-DO: 
 	//	-> 2.1b: nonphotorealistic shading program initialization
 	/*

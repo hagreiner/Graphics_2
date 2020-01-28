@@ -33,12 +33,12 @@
 out vec4 rtFragColor;
 
 uniform sampler2D uTex_dm; //1
-in vec2 vTexture; //2
+in vec2 vTexCoord; //2
 
 void main()
 {
 	// DUMMY OUTPUT: all fragments are OPAQUE WHITE
 	//rtFragColor = vec4(1.0, 1.0, 1.0, 1.0);
-	rtFragColor = texture(uTex_dm, vTexture);
+	rtFragColor = texture(uTex_dm, vTexCoord);
 }
  //https://www.khronos.org/opengl/wiki/Sampler_(GLSL)

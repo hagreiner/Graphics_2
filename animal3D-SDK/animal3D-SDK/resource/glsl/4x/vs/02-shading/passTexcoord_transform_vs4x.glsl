@@ -35,10 +35,10 @@
 
 layout (location = 0) in vec4 aPosition;
 
-layout (location = 8) in vec2 aTexture; //3
+layout (location = 8) in vec2 aTexCoord; //3
 
 uniform mat4 uAtlas; //4
-out vec2 vTexture; //5
+out vec2 vTexCoord; //5
 
 uniform mat4 uMVP; //1
 
@@ -46,6 +46,6 @@ void main()
 {
 	// DUMMY OUTPUT: directly assign input position to output position
 	gl_Position = uMVP * aPosition; //2
-	//vTexture = (uAtlas * aTexture); //6
-	vTexture = aTexture; //6
+	//vTexture = (uAtlas * aTexCoord); //6
+	vTexCoord = aTexCoord; //6
 }

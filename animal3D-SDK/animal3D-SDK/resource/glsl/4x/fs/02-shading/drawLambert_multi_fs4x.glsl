@@ -32,13 +32,45 @@
 //	Note: test all data and inbound values before using them!
 
 out vec4 rtFragColor;
-//uniform sampler2D uTex_dm; //1
-//uniform vec3 uLightPos; //2
-in vec4 vData;
+uniform sampler2D uTex_dm; //1
+
+//2
+const int size = 12;
+uniform vec4 uLightPos[size];
+uniform int uLightCt;
+uniform float uLightSz[size];
+uniform float uLightSzInvSq[size];
+uniform vec4 uLightCol[size];
+
+//3
+in vec4 vNormal;
+in vec2 vTexCoord;
+in vec4 vViewPosition;
 
 void main()
 {
 	// DUMMY OUTPUT: all fragments are OPAQUE RED
-	rtFragColor = vec4(1.0, 0.0, 0.0, 1.0);
-	//rtFragColor = uTex_dm * uLightPos;
+	vec4 TextureSample = texture(uTex_dm, vTexCoord);
+	//rtFragColor = uLightPos[1];
+
+	// - find lighting num (Lambert= N * L)
+	//vec3 N = normalize(vNormal);
+	//vec3 L = normalize(lightPos–passPosition);
+	//float perFragShading= MY_DIFFUSE_FUNC (N, L)
+	float lambertCoef = 0.0;
+	vec3 color = vec3(0.0, 0.0, 0.0);
+	// https://www.tomdalling.com/blog/modern-opengl/07-more-lighting-ambient-specular-attenuation-gamma/
+	float attenuation = 0.0;
+
+	for (int index=0; index < size && index < uLightCt; index++){
+		vec3 N = normalize(vNormal).xyz;
+		vec3 L = normalize(uLightPos[index] - vViewPosition).xyz;
+		float lightDistance = length(uLightPos[index] - vViewPosition);
+		lambertCoef = max(dot(N, L), 0);
+		attenuation = 1 / (1 + uLightSzInvSq[index] * (lightDistance * lightDistance));
+		color += attenuation * (lambertCoef * TextureSample.xyz * uLightCol[index].xyz);
+	}
+
+	// - apply lighting num to color
+	rtFragColor = vec4(color, 1.0);
 }
