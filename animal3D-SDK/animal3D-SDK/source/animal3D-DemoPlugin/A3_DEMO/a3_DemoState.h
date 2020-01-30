@@ -369,7 +369,7 @@ extern "C"
 
 		// ****TO-DO: 
 		//	-> 2.1a: framebuffer object union
-		/*
+		
 		// framebuffers
 		union {
 			a3_Framebuffer framebuffer[demoStateMaxCount_framebuffer];
@@ -378,7 +378,7 @@ extern "C"
 					fbo_scene[1];								// framebuffer for capturing scene
 			};
 		};
-		*/
+		
 
 
 		// managed objects, no touchie

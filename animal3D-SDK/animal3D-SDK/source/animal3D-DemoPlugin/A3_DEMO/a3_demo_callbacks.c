@@ -401,12 +401,12 @@ A3DYLIBSYMBOL void a3demoCB_windowResize(a3_DemoState *demoState, a3i32 newWindo
 
 	// ****TO-DO: 
 	//	-> 2.1b: framebuffer reload
-	/*
+	
 	// framebuffers should be initialized or re-initialized here 
 	//	since they are likely dependent on the window size
 	a3demo_unloadFramebuffers(demoState);
 	a3demo_loadFramebuffers(demoState);
-	*/
+	
 
 	// use framebuffer deactivate utility to set viewport
 	a3framebufferDeactivateSetViewport(a3fbo_depthDisable, -frameBorder, -frameBorder, demoState->frameWidth, demoState->frameHeight);

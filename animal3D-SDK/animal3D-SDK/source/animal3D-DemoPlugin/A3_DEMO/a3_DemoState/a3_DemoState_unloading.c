@@ -85,13 +85,13 @@ void a3demo_unloadFramebuffers(a3_DemoState* demoState)
 {
 	// ****TO-DO: 
 	//	-> 2.1e: framebuffer unloading
-	/*
+	
 	a3_Framebuffer* currentFBO = demoState->framebuffer,
 		* const endFBO = currentFBO + demoStateMaxCount_framebuffer;
 
 	while (currentFBO < endFBO)
 		a3framebufferRelease(currentFBO++);
-	*/
+	
 }
 
 
@@ -112,8 +112,8 @@ void a3demo_validateUnload(const a3_DemoState *demoState)
 		*const endProg = currentProg + demoStateMaxCount_shaderProgram;
 	const a3_Texture* currentTex = demoState->texture,
 		* const endTex = currentTex + demoStateMaxCount_texture;
-//	const a3_Framebuffer* currentFBO = demoState->framebuffer,
-//		* const endFBO = currentFBO + demoStateMaxCount_framebuffer;
+	const a3_Framebuffer* currentFBO = demoState->framebuffer,
+		* const endFBO = currentFBO + demoStateMaxCount_framebuffer;
 
 	handle = 0;
 	while (currentBuff < endBuff)

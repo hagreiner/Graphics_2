@@ -32,6 +32,7 @@
 //	5) declare new render target (location 3) and output texcoord
 
 out vec4 rtFragColor;
+uniform sampler2D 
 
 void main()
 {
