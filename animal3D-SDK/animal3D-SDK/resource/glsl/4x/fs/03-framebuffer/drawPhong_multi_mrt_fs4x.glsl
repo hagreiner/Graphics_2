@@ -33,10 +33,74 @@
 //	5) set location of final color render target (location 0)
 //	6) declare render targets for each attribute and shading component
 
-out vec4 rtFragColor;
+layout (location = 0) out vec4 rtFragColor; // 5
+
+//6 
+layout(location = 1) out vec4 rtFragColorPosition;	
+layout(location = 2) out vec4 rtFragColorNormal;	
+layout(location = 3) out vec4 rtFragColorTexCoord;	
+layout(location = 4) out vec4 rtFragColorDiffuse;
+layout(location = 5) out vec4 rtFragColorSpec;
+layout(location = 6) out vec4 rtFragColorDiffuseTotal;
+layout(location = 7) out vec4 rtFragColorSpecTotal;
+
+uniform sampler2D uTex_dm; //1
+uniform sampler2D uTex_sm; //1
+
+//2
+const int size = 12;
+uniform vec4 uLightPos[size];
+uniform int uLightCt;
+uniform float uLightSz[size];
+uniform float uLightSzInvSq[size];
+uniform vec4 uLightCol[size];
+
+//3
+in vec4 vNormal;
+in vec2 vTexCoord;
+in vec4 vViewPosition;
 
 void main()
 {
-	// DUMMY OUTPUT: all fragments are OPAQUE GREEN
-	rtFragColor = vec4(0.0, 1.0, 0.0, 1.0);
+	// DUMMY OUTPUT: all fragments are OPAQUE RED
+	vec4 diffuseMap = texture(uTex_dm, vTexCoord);
+	vec4 specMap = texture(uTex_sm, vTexCoord);
+
+	float diffuseCoef = 0.0;
+	float specularCoef = 0.0;
+	vec3 color = vec3(0.0, 0.0, 0.0);
+	vec3 diffuseTotal;
+	vec3 specTotal;
+	
+	// https://www.tomdalling.com/blog/modern-opengl/07-more-lighting-ambient-specular-attenuation-gamma/
+	float attenuation = 0.0;
+
+	for (int index=0; index < size && index < uLightCt; index++){
+		vec3 N = normalize(vNormal).xyz;
+		vec3 L = normalize(uLightPos[index] - vViewPosition).xyz;
+		float lightDistance = length(uLightPos[index] - vViewPosition);
+
+		diffuseCoef = max(dot(N, L), 0);
+		specularCoef = pow(max(dot(R, V), 0), 30);
+
+		diffuseTotal += diffuseCoef * diffuseMap.xyz;
+		specTotal += specularCoef * specMap.xyz;
+
+		attenuation = 1 / (1 + uLightSzInvSq[index] * (lightDistance * lightDistance));
+
+		color += attenuation * ((diffuseCoef * diffuseMap.xyz * uLightCol[index].xyz) + 
+		(specularCoef * specMap.xyz * uLightCol[index].xyz));
+	}
+
+	rtFragColor = vec4(color, 1.0);
+
+	//6
+	rtFragColorPosition = vViewPosition;
+	rtFragColorNormal = vNormal;	
+	rtFragColorTexCoord = vec4(vTexCoord, 0.0, 1.0);	
+	rtFragColorDiffuse = diffuseMap;
+	rtFragColorDiffuseTotal = vec4(diffuseTotal, 1.0);
+
+	rtFragColorSpec = specMap;
+	rtFragColorSpecTotal = vec4(specTotal, 1.0);
 }

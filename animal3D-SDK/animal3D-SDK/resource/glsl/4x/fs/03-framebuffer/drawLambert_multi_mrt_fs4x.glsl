@@ -84,6 +84,7 @@ void main()
 	rtFragColor = vec4(color, 1.0);
 
 	//6
+	rtFragColorPosition = vViewPosition;
 	rtFragColorNormal = vNormal;	
 	rtFragColorTexCoord = vec4(vTexCoord, 0.0, 1.0);	
 	rtFragColorDiffuse = diffuseMap;

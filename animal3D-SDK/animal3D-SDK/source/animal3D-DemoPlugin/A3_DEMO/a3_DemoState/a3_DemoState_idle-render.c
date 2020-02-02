@@ -512,30 +512,30 @@ void a3demo_render_main(const a3_DemoState *demoState,
 	//	currentDemoProgram = demoState->prog_drawColorUnif;
 		currentDemoProgram = demoState->prog_drawTexture;
 		a3shaderProgramActivate(currentDemoProgram->program);
-		a3real4x4Product(modelViewProjectionMat.m, activeCamera->viewProjectionMat.m, currentSceneObject->modelMat.m);
-		a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uMVP, 1, modelViewProjectionMat.mm);
-		a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uAtlas, 1, a3mat4_identity.mm);
+		//a3real4x4Product(modelViewProjectionMat.m, activeCamera->viewProjectionMat.m, currentSceneObject->modelMat.m);
+		//a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uMVP, 1, modelViewProjectionMat.mm);
+		//a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uAtlas, 1, a3mat4_identity.mm);
 		// ****TO-DO: 
 		//	-> 2.1f: activate skybox texture
-		a3textureActivate(demoState->tex_skybox_clouds, a3tex_unit00);
+		//a3textureActivate(demoState->tex_skybox_clouds, a3tex_unit00);
 
 		// change depth mode to 'always' to ensure box gets drawn and resets depth
 		// draw inverted box
 		glDepthFunc(GL_ALWAYS);
 		glCullFace(GL_FRONT);
-		a3vertexDrawableActivateAndRender(currentDrawable);
+		//a3vertexDrawableActivateAndRender(currentDrawable);
 		glCullFace(GL_BACK);
 		glDepthFunc(GL_LEQUAL);
 	}
-	else
-	{
+	//else
+	//{
 		// clearing is expensive!
 		// only call clear if skybox is not used; 
 		//	skybox will draw over everything otherwise
 //>>>>>>> g2-lab2
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		break;
-	}
+		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		//break;
+	//}
 
 
 	// optional stencil test before drawing objects
