@@ -370,6 +370,12 @@ void a3demo_render_main(const a3_DemoState *demoState,
 		demoState->draw_teapot,
 	};
 
+//<<<<<<< HEAD
+//=======
+	// ****TO-DO: 
+	//	-> 2.1c: convenient array of textures for scene objects
+	
+//>>>>>>> g2-lab2
 	// temp texture pointers
 	const a3_Texture* texture_dm[] = {
 		demoState->tex_stone_dm,
@@ -385,7 +391,15 @@ void a3demo_render_main(const a3_DemoState *demoState,
 		demoState->tex_mars_sm,
 		demoState->tex_checker,
 	};
+//<<<<<<< HEAD
 
+//=======
+	
+
+	// ****TO-DO: 
+	//	-> 2.1d: convenient array of forward lighting shader programs
+	
+//>>>>>>> g2-lab2
 	// forward pipeline shader programs
 	const a3_DemoStateShaderProgram* forwardProgram[][demoStateForwardShadingModeMax] = {
 		{
@@ -413,6 +427,7 @@ void a3demo_render_main(const a3_DemoState *demoState,
 			demoState->prog_drawTexture_coordManip,
 		},
 	};
+//<<<<<<< HEAD
 
 	// ****TO-DO: 
 	//	-> 2.1g: framebuffer for display
@@ -424,11 +439,22 @@ void a3demo_render_main(const a3_DemoState *demoState,
 	};
 	
 
+//=======
+	
+
+	// ****TO-DO: 
+	//	-> 3.1b: convenient arrays of lighting data
+	
+//>>>>>>> g2-lab2
 	// tmp lighting data
 	a3f32 lightSz[demoStateMaxCount_lightObject];
 	a3f32 lightSzInvSq[demoStateMaxCount_lightObject];
 	a3vec4 lightPos[demoStateMaxCount_lightObject];
 	a3vec4 lightCol[demoStateMaxCount_lightObject];
+//<<<<<<< HEAD
+//=======
+	
+//>>>>>>> g2-lab2
 
 
 	//-------------------------------------------------------------------------
@@ -470,6 +496,7 @@ void a3demo_render_main(const a3_DemoState *demoState,
 		// shading with MRT
 	case demoStateSubMode_main_mrt:
 		// ****TO-DO: 
+//<<<<<<< HEAD
 		//	-> 2.1h: activate framebuffer
 		
 		// target scene framebuffer
@@ -480,6 +507,32 @@ void a3demo_render_main(const a3_DemoState *demoState,
 		// clear now, handle skybox later
 		glDisable(GL_STENCIL_TEST);
 		glDisable(GL_BLEND);
+//=======
+		//	-> 2.1e: replace uniform color program with texturing program
+	//	currentDemoProgram = demoState->prog_drawColorUnif;
+		currentDemoProgram = demoState->prog_drawTexture;
+		a3shaderProgramActivate(currentDemoProgram->program);
+		a3real4x4Product(modelViewProjectionMat.m, activeCamera->viewProjectionMat.m, currentSceneObject->modelMat.m);
+		a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uMVP, 1, modelViewProjectionMat.mm);
+		a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uAtlas, 1, a3mat4_identity.mm);
+		// ****TO-DO: 
+		//	-> 2.1f: activate skybox texture
+		a3textureActivate(demoState->tex_skybox_clouds, a3tex_unit00);
+
+		// change depth mode to 'always' to ensure box gets drawn and resets depth
+		// draw inverted box
+		glDepthFunc(GL_ALWAYS);
+		glCullFace(GL_FRONT);
+		a3vertexDrawableActivateAndRender(currentDrawable);
+		glCullFace(GL_BACK);
+		glDepthFunc(GL_LEQUAL);
+	}
+	else
+	{
+		// clearing is expensive!
+		// only call clear if skybox is not used; 
+		//	skybox will draw over everything otherwise
+//>>>>>>> g2-lab2
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		break;
 	}
@@ -527,6 +580,12 @@ void a3demo_render_main(const a3_DemoState *demoState,
 	}
 
 
+//<<<<<<< HEAD
+//=======
+	// ****TO-DO: 
+	//	-> 3.1c: update lighting data
+	
+//>>>>>>> g2-lab2
 	// copy temp light data
 	for (k = 0, pointLight = demoState->forwardPointLight;
 		k < demoState->forwardLightCount;
@@ -537,6 +596,10 @@ void a3demo_render_main(const a3_DemoState *demoState,
 		lightPos[k] = pointLight->viewPos;
 		lightCol[k] = pointLight->color;
 	}
+//<<<<<<< HEAD
+//=======
+	
+//>>>>>>> g2-lab2
 
 
 	// support multiple geometry passes
@@ -547,9 +610,19 @@ void a3demo_render_main(const a3_DemoState *demoState,
 		{
 			// forward pass
 		case 0: {
+//<<<<<<< HEAD
+//=======
+			// ****TO-DO: 
+			//	-> 2.1g: select and activate program
+			
+//>>>>>>> g2-lab2
 			// select program based on settings
 			currentDemoProgram = forwardProgram[demoSubMode][demoState->forwardShadingMode];
 			a3shaderProgramActivate(currentDemoProgram->program);
+//<<<<<<< HEAD
+//=======
+			
+//>>>>>>> g2-lab2
 
 			// send shared data: 
 			//	- projection matrix
@@ -561,6 +634,12 @@ void a3demo_render_main(const a3_DemoState *demoState,
 			a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uAtlas, 1, a3mat4_identity.mm);
 			a3shaderUniformSendDouble(a3unif_single, currentDemoProgram->uTime, 1, &demoState->renderTimer->totalTime);
 			a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uColor, 1, skyblue);
+//<<<<<<< HEAD
+//=======
+			// ****TO-DO: 
+			//	-> 3.1d: upload of uniform lighting data
+			
+//>>>>>>> g2-lab2
 			a3shaderUniformSendInt(a3unif_single, currentDemoProgram->uLightCt, 1, &demoState->forwardLightCount);
 			a3shaderUniformSendFloat(a3unif_single, currentDemoProgram->uLightSz, demoState->forwardLightCount, lightSz);
 			a3shaderUniformSendFloat(a3unif_single, currentDemoProgram->uLightSzInvSq, demoState->forwardLightCount, lightSzInvSq);
@@ -568,6 +647,10 @@ void a3demo_render_main(const a3_DemoState *demoState,
 			a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uLightCol, demoState->forwardLightCount, lightCol->v);
 			a3textureActivate(demoState->tex_ramp_dm, a3tex_unit04);
 			a3textureActivate(demoState->tex_ramp_sm, a3tex_unit05);
+//<<<<<<< HEAD
+//=======
+			
+//>>>>>>> g2-lab2
 
 			// individual object requirements: 
 			//	- modelviewprojection
@@ -590,8 +673,17 @@ void a3demo_render_main(const a3_DemoState *demoState,
 				a3demo_quickInvertTranspose_internal(modelViewMat.m);
 				modelViewMat.v3 = a3vec4_zero;
 				a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uMV_nrm, 1, modelViewMat.mm);
+//<<<<<<< HEAD
 				a3textureActivate(texture_dm[k], a3tex_unit00);
 				a3textureActivate(texture_sm[k], a3tex_unit01);
+//=======
+				// ****TO-DO: 
+				//	-> 2.1h: activate textures
+				
+				a3textureActivate(texture_dm[k], a3tex_unit00);
+				a3textureActivate(texture_sm[k], a3tex_unit01);
+				
+//>>>>>>> g2-lab2
 
 				// draw
 				currentDrawable = drawable[k];

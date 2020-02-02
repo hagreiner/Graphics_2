@@ -37,6 +37,7 @@ layout (location = 0) in vec4 aPosition;
 
 layout (location = 8) in vec4 aTexCoord; //3
 
+
 uniform mat4 uAtlas; //4
 out vec2 vTexCoord; //5
 
@@ -47,4 +48,5 @@ void main()
 	// DUMMY OUTPUT: directly assign input position to output position
 	gl_Position = uMVP * aPosition; //2
 	vTexCoord = vec2(uAtlas * aTexCoord); //6
+
 }

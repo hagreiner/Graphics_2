@@ -332,11 +332,18 @@ extern "C"
 					prog_drawColorUnif_instanced[1],			// draw uniform color with instancing
 					prog_drawColorAttrib[1],					// draw color attribute
 					prog_drawColorUnif[1];						// draw uniform color
+//<<<<<<< HEAD
+//=======
+				// ****TO-DO: 
+				//	-> 2.1a: new program declarations
+				
+//>>>>>>> g2-lab2
 				a3_DemoStateShaderProgram
 					prog_drawNonphoto_multi[1],					// draw non-photorealistic shading model, multiple lights
 					prog_drawPhong_multi[1],					// draw Phong shading model, multiple lights
 					prog_drawLambert_multi[1],					// draw Lambert shading model, multiple lights
 					prog_drawTexture[1];						// draw texture
+//<<<<<<< HEAD
 				a3_DemoStateShaderProgram
 					prog_drawTexture_coordManip[1],				// draw texture with manipulated texture coordinates
 					prog_drawTexture_colorManip[1],				// draw texture with manipulated output color
@@ -344,6 +351,9 @@ extern "C"
 					prog_drawPhong_multi_mrt[1],				// draw Phong shading model, multiple lights, MRT
 					prog_drawLambert_multi_mrt[1],				// draw Lambert shading model, multiple lights, MRT
 					prog_drawTexture_mrt[1];					// draw texture, MRT
+//=======
+				
+//>>>>>>> g2-lab2
 			};
 		};
 
