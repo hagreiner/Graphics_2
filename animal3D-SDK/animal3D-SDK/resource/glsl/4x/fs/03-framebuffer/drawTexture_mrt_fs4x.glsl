@@ -39,7 +39,7 @@ layout (location = 3) out vec4 rtTexCoord; //5
 void main()
 {
 	// DUMMY OUTPUT: all fragments are OPAQUE WHITE
+
 	rtFragColor = texture(uTex_dm, vTexCoord); //4 and 3
 	rtTexCoord = vec4(vTexCoord, 0.0, 1.0); //5
-
 }

@@ -36,11 +36,11 @@
 layout (location = 0) out vec4 rtFragColor; // 5
 
 //6 
+layout(location = 1) out vec4 rtFragColorPosition;	
 layout(location = 2) out vec4 rtFragColorNormal;	
-layout(location = 8) out vec4 rtFragColorTexCoord;	
-layout(location = 9) out vec4 rtFragColorDiffuse;
-layout(location = 10) out vec4 rtFragColorDiffuseTotal;
-layout(location = 11) out vec4 rtFragColorLambertTotal;	
+layout(location = 3) out vec4 rtFragColorTexCoord;	
+layout(location = 4) out vec4 rtFragColorDiffuse;
+layout(location = 6) out vec4 rtFragColorDiffuseTotal;	
 
 uniform sampler2D uTex_dm; //1
 
@@ -75,13 +75,13 @@ void main()
 		float lightDistance = length(uLightPos[index] - vViewPosition);
 
 		diffuseCoef = max(dot(N, L), 0);
-		diffuseTotal += diffuseCoef * diffuseMap.xyz
+		diffuseTotal += diffuseCoef * diffuseMap.xyz;
 		attenuation = 1 / (1 + uLightSzInvSq[index] * (lightDistance * lightDistance));
 
 		color += attenuation * (diffuseCoef * diffuseMap.xyz * uLightCol[index].xyz);
 	}
 
-	rtFragColorLambertTotal = vec4(color, 1.0);
+	rtFragColor = vec4(color, 1.0);
 
 	//6
 	rtFragColorNormal = vNormal;	
