@@ -76,7 +76,7 @@ void main()
 		float lightDistance = length(uLightPos[index] - vViewPosition);
 
 		diffuseCoef = max(dot(N, L), 0);
-		diffuseTotal += diffuseCoef;
+		diffuseTotal += diffuseCoef * uLightCol[index].xyz;
 		attenuation = 1 / (1 + uLightSzInvSq[index] * (lightDistance * lightDistance));
 
 		color += attenuation * (diffuseCoef * diffuseMap.xyz * uLightCol[index].xyz);

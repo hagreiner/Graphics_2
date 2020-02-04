@@ -33,8 +33,18 @@
 
 out vec4 rtFragColor;
 
+uniform sampler2D uTex_dm; //1
+in vec2 vTexCoord; //2
+
+uniform float uTime;
+vec2 texCoordinate;
+
 void main()
 {
 	// DUMMY OUTPUT: all fragments are OPAQUE DARK GREY
-	rtFragColor = vec4(0.2, 0.2, 0.2, 1.0);
+	texCoordinate = vTexCoord.xy;
+    texCoordinate += vec2(sin(texCoordinate.x*5 - texCoordinate.y*5 + uTime)/15.0, cos(texCoordinate.y + uTime)/15.0);
+    
+	rtFragColor = texture(uTex_dm, texCoordinate);
 }
+// https://www.opengl.org/sdk/docs/tutorials/TyphoonLabs/Chapter_3.pdf

@@ -85,8 +85,8 @@ void main()
 		diffuseCoef = max(dot(N, L), 0);
 		specularCoef = pow(max(dot(R, V), 0), 30);
 
-		diffuseTotal += diffuseCoef;
-		specTotal += specularCoef;
+		diffuseTotal += diffuseCoef * uLightCol[index].xyz;
+		specTotal += specularCoef * uLightCol[index].xyz;
 
 		attenuation = 1 / (1 + uLightSzInvSq[index] * (lightDistance * lightDistance));
 
