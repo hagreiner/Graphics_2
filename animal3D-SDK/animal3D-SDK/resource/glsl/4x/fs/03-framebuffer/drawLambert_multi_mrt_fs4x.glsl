@@ -68,14 +68,15 @@ void main()
 	
 	// https://www.tomdalling.com/blog/modern-opengl/07-more-lighting-ambient-specular-attenuation-gamma/
 	float attenuation = 0.0;
+	vec3 N = normalize(vNormal).xyz;
 
 	for (int index=0; index < size && index < uLightCt; index++){
-		vec3 N = normalize(vNormal).xyz;
 		vec3 L = normalize(uLightPos[index] - vViewPosition).xyz;
+
 		float lightDistance = length(uLightPos[index] - vViewPosition);
 
 		diffuseCoef = max(dot(N, L), 0);
-		diffuseTotal += diffuseCoef * diffuseMap.xyz;
+		diffuseTotal += diffuseCoef;
 		attenuation = 1 / (1 + uLightSzInvSq[index] * (lightDistance * lightDistance));
 
 		color += attenuation * (diffuseCoef * diffuseMap.xyz * uLightCol[index].xyz);
@@ -85,7 +86,7 @@ void main()
 
 	//6
 	rtFragColorPosition = vViewPosition;
-	rtFragColorNormal = vNormal;	
+	rtFragColorNormal = vec4(N, 1.0);	
 	rtFragColorTexCoord = vec4(vTexCoord, 0.0, 1.0);	
 	rtFragColorDiffuse = diffuseMap;
 	rtFragColorDiffuseTotal = vec4(diffuseTotal, 1.0);

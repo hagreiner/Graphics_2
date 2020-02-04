@@ -503,7 +503,7 @@ void a3demo_render_main(const a3_DemoState *demoState,
 		currentWriteFBO = demoState->fbo_scene;
 		a3framebufferActivate(currentWriteFBO);
 		
-
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		// clear now, handle skybox later
 		glDisable(GL_STENCIL_TEST);
 		glDisable(GL_BLEND);
