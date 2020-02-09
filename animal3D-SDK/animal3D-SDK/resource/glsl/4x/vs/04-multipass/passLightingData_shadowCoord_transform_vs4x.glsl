@@ -33,9 +33,30 @@
 //	3) calculate and pass shadow coordinate
 
 layout (location = 0) in vec4 aPosition;
+uniform mat4 uMV; //0.1
+out vec4 vViewPosition; //0.2
+
+uniform mat4 uP; //0.4
+
+layout (location = 2) in vec4 aNormals; //0.6
+uniform mat4 uMV_nrm; //0.7
+out vec4 vNormal; //0.8
+
+layout (location = 8) in vec2 aTexCoord; //0.10
+out vec2 vTexCoord; //0.10
+
+uniform mat4 uMVPB; //1
+out vec4 vShadowCoord; //2
 
 void main()
 {
 	// DUMMY OUTPUT: directly assign input position to output position
-	gl_Position = aPosition;
+	//gl_Position = aPosition;
+	vViewPosition = uMV * aPosition; //0.3
+	gl_Position = uP * vViewPosition; //0.5
+
+	vNormal =  uMV_nrm * aNormals; //0.9
+	vTexCoord = aTexCoord; //0.10
+
+	vShadowCoord = uMVPB * vNormal;
 }

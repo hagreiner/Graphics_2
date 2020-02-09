@@ -30,8 +30,13 @@
 
 out vec4 rtFragColor;
 
+uniform sampler2D uTex_dm; //0.1
+in vec2 vTexCoord; //0.2
+
 void main()
 {
-	// DUMMY OUTPUT: all fragments are OPAQUE DARK GREY
-	rtFragColor = vec4(0.2, 0.2, 0.2, 1.0);
+	// DUMMY OUTPUT: all fragments are OPAQUE WHITE
+	//rtFragColor = vec4(1.0, 1.0, 1.0, 1.0);
+	rtFragColor = texture(uTex_dm, vTexCoord);
 }
+//https://gist.github.com/xoppa/33589b7d5805205f8f08
