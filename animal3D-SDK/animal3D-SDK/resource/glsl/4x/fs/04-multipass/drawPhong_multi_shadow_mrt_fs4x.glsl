@@ -38,8 +38,8 @@ layout (location = 0) out vec4 rtFragColor; // 0.5
 layout(location = 1) out vec4 rtFragColorPosition;	
 layout(location = 2) out vec4 rtFragColorNormal;	
 layout(location = 3) out vec4 rtFragColorTexCoord;	
-layout(location = 4) out vec4 rtFragColorDiffuse;
-layout(location = 5) out vec4 rtFragColorSpec;
+layout(location = 4) out vec4 rtFragColorShadowCoord;
+layout(location = 5) out vec4 rtFragColorShadowTest;
 layout(location = 6) out vec4 rtFragColorDiffuseTotal;
 layout(location = 7) out vec4 rtFragColorSpecTotal;
 
@@ -70,10 +70,11 @@ void main()
 
 	vec4 diffuseMap = texture(uTex_dm, vTexCoord);
 	vec4 specMap = texture(uTex_sm, vTexCoord);
-	vec4 shadowMap = texture(uTex_dm, vTexCoord); //3
+	vec4 shadowMap = texture(uTex_shadow, vTexCoord); //3
 
-	float shadowSample = texture(uTex_dm, projScreen.xy).r; //3
-	bool fragShadowed = (projScreen.z > shadowSample); //4
+	float shadowSample = texture(uTex_shadow, projScreen.xy).r; //3
+	//bool fragShadowed = (projScreen.z > (shadowSample + 0.0025)); //4
+	float shadowTestFloat = projScreen.z > (shadowSample + 0.0025)? 0.2 : 1.0; //4
 
 	float diffuseCoef = 0.0;
 	float specularCoef = 0.0;
@@ -94,30 +95,28 @@ void main()
 		diffuseCoef = max(dot(N, L), 0);
 		specularCoef = pow(max(dot(R, V), 0), 30);
 
+		attenuation = 1 / (1 + uLightSzInvSq[index] * (lightDistance * lightDistance));
+		
 		diffuseTotal += diffuseCoef * uLightCol[index].xyz;
 		specTotal += specularCoef * uLightCol[index].xyz;
 
-		attenuation = 1 / (1 + uLightSzInvSq[index] * (lightDistance * lightDistance));
-
-		color += attenuation * ((diffuseCoef * diffuseMap.xyz * uLightCol[index].xyz) + 
-		(specularCoef * specMap.xyz * uLightCol[index].xyz));
+		color += attenuation * ((diffuseCoef * diffuseMap.xyz * uLightCol[index].xyz * 0.7) + 
+		(specularCoef * specMap.xyz * uLightCol[index].xyz * 0.7));
 	}
 	
-	//4
-	if (fragShadowed) {
-		diffuseTotal *= 0.2; 
-		specTotal *= 0.2;
-	}
+	rtFragColor = vec4(color * shadowTestFloat, 1.0);
 
-	rtFragColor = vec4(color, 1.0);
+	//4	
+	vec4 shadowTest = vec4(1.0, 1.0, 1.0, 1.0) * shadowTestFloat;
 
 	//0.6
 	rtFragColorPosition = vViewPosition;
 	rtFragColorNormal = vec4(N, 1.0);	
 	rtFragColorTexCoord = vec4(vTexCoord, 0.0, 1.0);	
-	rtFragColorDiffuse = diffuseMap;
-	rtFragColorDiffuseTotal = vec4(diffuseTotal, 1.0);
+	
+	rtFragColorShadowCoord = projScreen;
+	rtFragColorShadowTest = shadowTest;
 
-	rtFragColorSpec = specMap;
 	rtFragColorSpecTotal = vec4(specTotal, 1.0);
+	rtFragColorDiffuseTotal = vec4(diffuseTotal, 1.0);
 }

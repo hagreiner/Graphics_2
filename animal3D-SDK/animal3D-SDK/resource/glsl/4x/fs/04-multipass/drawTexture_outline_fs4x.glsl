@@ -33,10 +33,18 @@ out vec4 rtFragColor;
 uniform sampler2D uTex_dm; //0.1
 in vec2 vTexCoord; //0.2
 
+float offset = 1.0 / 128.0;
+vec4  outLineColor = vec4(1.0, 1.0, 1.0, 1.0);
+
 void main()
 {
-	// DUMMY OUTPUT: all fragments are OPAQUE WHITE
-	//rtFragColor = vec4(1.0, 1.0, 1.0, 1.0);
-	rtFragColor = texture(uTex_dm, vTexCoord);
+	vec4 col = texture(uTex_dm, vTexCoord);
+	float a = texture(uTex_dm, vec2(vTexCoord.x + offset, vTexCoord.y)).a +
+			texture(uTex_dm, vec2(vTexCoord.x, vTexCoord.y - offset)).a +
+			texture(uTex_dm, vec2(vTexCoord.x - offset, vTexCoord.y)).a +
+			texture(uTex_dm, vec2(vTexCoord.x, vTexCoord.y + offset)).a;
+	col *= outLineColor;
+	rtFragColor = col;
 }
+
 //https://gist.github.com/xoppa/33589b7d5805205f8f08

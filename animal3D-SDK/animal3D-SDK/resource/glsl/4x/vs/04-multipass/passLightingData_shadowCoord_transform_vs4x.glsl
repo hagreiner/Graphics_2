@@ -45,7 +45,7 @@ out vec4 vNormal; //0.8
 layout (location = 8) in vec2 aTexCoord; //0.10
 out vec2 vTexCoord; //0.10
 
-uniform mat4 uMVPB; //1
+uniform mat4 uMVPB_other; //1
 out vec4 vShadowCoord; //2
 
 void main()
@@ -58,5 +58,5 @@ void main()
 	vNormal =  uMV_nrm * aNormals; //0.9
 	vTexCoord = aTexCoord; //0.10
 
-	vShadowCoord = uMVPB * vNormal;
+	vShadowCoord = uMVPB_other * aPosition;
 }
