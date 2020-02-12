@@ -31,20 +31,23 @@
 out vec4 rtFragColor;
 
 uniform sampler2D uTex_dm; //0.1
-in vec2 vTexCoord; //0.2
+in vec2 vTexCoord[9]; //0.2
 
 float offset = 1.0 / 128.0;
+vec2 offsetVec = vec2(0.5, 0.5);
 vec4  outLineColor = vec4(1.0, 1.0, 1.0, 1.0);
+uniform vec2 localOffset[9];
 
-void main()
+void main(void)
 {
-	vec4 col = texture(uTex_dm, vTexCoord);
-	float a = texture(uTex_dm, vec2(vTexCoord.x + offset, vTexCoord.y)).a +
-			texture(uTex_dm, vec2(vTexCoord.x, vTexCoord.y - offset)).a +
-			texture(uTex_dm, vec2(vTexCoord.x - offset, vTexCoord.y)).a +
-			texture(uTex_dm, vec2(vTexCoord.x, vTexCoord.y + offset)).a;
-	col *= outLineColor;
-	rtFragColor = col;
+	vec4 sampleMin[9];
+	vec4 minValue = vec4(1.0);
+	
+	for (int i = 0; i < 9; i++){
+		sampleMin[i] = texture(uTex_dm, vec2(vTexCoord[0].st + localOffset[i]));
+		minValue = min(sampleMin[i], minValue);
+	}
+	rtFragColor = minValue;
 }
 
 //https://gist.github.com/xoppa/33589b7d5805205f8f08
