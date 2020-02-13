@@ -31,23 +31,38 @@
 out vec4 rtFragColor;
 
 uniform sampler2D uTex_dm; //0.1
-in vec2 vTexCoord[9]; //0.2
+in vec2 vTexCoord; //0.2
+layout (location = 2) in vec4 aNormals;
+uniform mat4 uMV_nrm;
 
-float offset = 1.0 / 128.0;
-vec2 offsetVec = vec2(0.5, 0.5);
-vec4  outLineColor = vec4(1.0, 1.0, 1.0, 1.0);
-uniform vec2 localOffset[9];
+vec4 outlineColor = vec4(1.0, 1.0, 0.0, 1.0);
+float outlineSize = 0.8;
 
 void main(void)
 {
-	vec4 sampleMin[9];
-	vec4 minValue = vec4(1.0);
-	
-	for (int i = 0; i < 9; i++){
-		sampleMin[i] = texture(uTex_dm, vec2(vTexCoord[0].st + localOffset[i]));
-		minValue = min(sampleMin[i], minValue);
+	//float a = texture(uTex_dm, vTexCoord + (outlineSize, 0)).a;
+	//float b = texture(uTex_dm, vTexCoord - (outlineSize, 0)).a;
+	//float c = texture(uTex_dm, vTexCoord - (0, outlineSize)).a;
+	//float d = texture(uTex_dm, vTexCoord + (0, outlineSize)).a;
+	//
+	//float result = a + b + c + d;
+
+	//rtFragColor = texture(uTex_dm, vTexCoord);
+
+
+	vec4 col = texture2D(uTex_dm, vTexCoord);
+	if (col.a > 0.5)
+		rtFragColor = col;
+	else {
+		float a = texture2D(uTex_dm, vec2(vTexCoord.x + outlineSize, vTexCoord.y)).a +
+			texture(uTex_dm, vec2(vTexCoord.x, vTexCoord.y - outlineSize)).a +
+			texture(uTex_dm, vec2(vTexCoord.x - outlineSize, vTexCoord.y)).a +
+			texture(uTex_dm, vec2(vTexCoord.x, vTexCoord.y + outlineSize)).a;
+		if (col.a < 1.0 && a > 0.0)
+			rtFragColor = vec4(1.0, 0.0, 0.0, 1.0);
+		else
+			rtFragColor = col;
 	}
-	rtFragColor = minValue;
 }
 
 //https://gist.github.com/xoppa/33589b7d5805205f8f08
