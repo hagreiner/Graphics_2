@@ -620,31 +620,31 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 	// 05-bloom programs: 
 	// ****TO-DO: 
 	//	-> 2.1b: setup bright pass program
-	/*
+	
 	// texturing with bright-pass or tone-mapping
 	currentDemoProg = demoState->prog_drawTexture_brightPass;
 	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-tex-bright");
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passTexcoord_transform_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawTexture_brightPass_fs->shader);
-	*/
+	
 	// ****TO-DO: 
 	//	-> 3.1a: setup Gaussian blur program
-	/*
+	
 	// texturing with Gaussian blurring
 	currentDemoProg = demoState->prog_drawTexture_blurGaussian;
 	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-tex-blur");
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passTexcoord_transform_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawTexture_blurGaussian_fs->shader);
-	*/
+	
 	// ****TO-DO: 
 	//	-> 4.1a: setup screen blending program
-	/*
+	
 	// texturing with bloom composition
 	currentDemoProg = demoState->prog_drawTexture_blendScreen4;
 	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-tex-blend4");
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passTexcoord_transform_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawTexture_blendScreen4_fs->shader);
-	*/
+	
 
 
 	// activate a primitive for validation
@@ -873,13 +873,15 @@ void a3demo_loadFramebuffers(a3_DemoState* demoState)
 
 		// ****TO-DO: 
 		//	-> 2.1c: set up half-size framebuffers
-		/*
+		///*
 		//	-> post-processing, color only
 		fbo = demoState->fbo_post_c16_2fr + i;
-		???
-		???
-		???
-		*/
+		fbo = demoState->fbo_post_c16_2fr + i + 1;
+		fbo = demoState->fbo_post_c16_2fr + i + 2;
+		//???
+		//???
+		//???
+		//*/
 		// ****TO-DO: 
 		//	-> 4.1b: set up smaller framebuffers
 		/*

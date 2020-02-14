@@ -254,7 +254,7 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 		// ****TO-DO: 
 		//	-> 2.1d: uncomment half-size framebuffers
 		//	-> 4.1c: add smaller framebuffers for writing additional passes (6 lines)
-		/*
+		///*
 		demoState->fbo_post_c16_2fr + 0,
 		demoState->fbo_post_c16_2fr + 1,
 		demoState->fbo_post_c16_2fr + 2,
@@ -264,7 +264,7 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 
 
 
-		*/
+		//*/
 		demoState->fbo_composite_c16 + 0,
 	};
 
@@ -277,7 +277,7 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 		// ****TO-DO: 
 		//	-> 2.1e: uncomment half-size framebuffers
 		//	-> 4.1d: add smaller framebuffers for reading additional passes (6 lines)
-		/*
+		///*
 		{ demoState->fbo_post_c16_2fr + 0, 0, },
 		{ demoState->fbo_post_c16_2fr + 1, 0, },
 
@@ -286,10 +286,10 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 
 
 
-		*/
+		//*/
 		// ****TO-DO: 
 		//	-> 2.1f: uncomment blend pass read list with half-size FBO and original composite
-	//	{ demoState->fbo_post_c16_2fr + 2, demoState->fbo_composite_c16 + 2, 0, 0, },
+		{ demoState->fbo_post_c16_2fr + 2, demoState->fbo_composite_c16 + 2, 0, 0, },
 		// ****TO-DO: 
 		//	-> 4.1e: replace above blend pass read list with extended read list below
 	//	{ demoState->fbo_post_c16_8fr + 2, demoState->fbo_post_c16_4fr + 2, demoState->fbo_post_c16_2fr + 2, demoState->fbo_composite_c16 + 2, },
@@ -524,14 +524,17 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 	//		-> 1) activate frameuffer for writing
 	//		-> 2) bind first color texture from framebuffer used in previous pass
 	//		-> 3) draw full-screen quad (already active)
-	/*
+	///*
 	currentPass = pipelines_passBright_2;
 	currentWriteFBO = writeFBO[currentPass];
 	currentReadFBO = readFBO[currentPass][0];
-	???
-	???
-	???
-	*/
+
+	a3framebufferActivate(currentWriteFBO);
+	a3framebufferBindColorTexture();
+	//???
+	//???
+	//???
+	//*/
 
 	// blur half-size
 	currentDemoProgram = demoState->prog_drawTexture_blurGaussian;

@@ -343,11 +343,11 @@ extern "C"
 				a3_Framebuffer
 					// ****TO-DO: 
 					//	-> 2.1a: uncomment post-processing framebuffers
-					/*
+					
 					fbo_post_c16_2fr[3],						// framebuffers for post-processing, half frame size
 					fbo_post_c16_4fr[3],						// framebuffers for post-processing, quarter frame size
 					fbo_post_c16_8fr[3],						// framebuffers for post-processing, eighth frame size
-					*/
+					
 					fbo_composite_c16[3];						// framebuffers for composition
 			};
 		};
