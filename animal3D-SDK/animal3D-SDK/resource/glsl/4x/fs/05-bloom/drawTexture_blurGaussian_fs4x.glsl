@@ -34,7 +34,7 @@ layout (location = 0) out vec4 rtFragColor;
 in vec2 vTexCoord;
 uniform sampler2D uImage00;
 
-uniform vec2 pixelSize; //pixel size
+uniform vec2 direction; //pixel size
 uniform vec2 a3vec2_x; //axis x
 uniform vec2 a3vec2_y; //axis y
 
@@ -49,7 +49,7 @@ vec4 blurGaussianTwo(sampler2D image, vec2 center, vec2 direction){
 void main()
 {
 	// DUMMY OUTPUT: all fragments are OPAQUE CYAN
-	vec4 color = blurGaussianTwo(uImage00, vTexCoord, pixelSize);
+	vec4 color = blurGaussianTwo(uImage00, vTexCoord, direction);
 	
 	rtFragColor = color;
 }
