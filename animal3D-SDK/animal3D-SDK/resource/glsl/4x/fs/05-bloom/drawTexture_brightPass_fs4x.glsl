@@ -32,9 +32,28 @@
 uniform sampler2D uImage00;
 
 layout (location = 0) out vec4 rtFragColor;
+in vec2 vTexCoord;
+vec3 texColor;
+
+const float min = 0.2; //2
+const float gamma = 1.75; //2
+
+float relLuminance(vec3 c){
+	return (0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b); //1
+}
 
 void main()
 {
 	// DUMMY OUTPUT: all fragments are OPAQUE CYAN
-	rtFragColor = vec4(0.0, 1.0, 1.0, 1.0);
+	texColor = pow(texture(uImage00, vTexCoord).rgb, vec3(gamma)); //2
+
+	//1
+	float luminance = relLuminance(texColor);
+
+	//2
+	vec3 mapped = (texColor * luminance);
+
+	rtFragColor = vec4(mapped, 1.0);
 }
+
+//https://learnopengl.com/Advanced-Lighting/HDR

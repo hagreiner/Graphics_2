@@ -312,8 +312,8 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 
 	// pixel size and effect axis
 	a3vec2 pixelSize = a3vec2_one;
-	a3vec2 sampleAxisH = a3vec2_x;
-	a3vec2 sampleAxisV = a3vec2_y;
+	//a3vec2 sampleAxisH = a3vec2_x;
+	//a3vec2 sampleAxisV = a3vec2_y;
 
 
 	// bias matrix
@@ -530,10 +530,8 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 	currentReadFBO = readFBO[currentPass][0];
 
 	a3framebufferActivate(currentWriteFBO);
-	a3framebufferBindColorTexture();
-	//???
-	//???
-	//???
+	a3framebufferBindColorTexture(currentReadFBO, a3tex_unit00, 4);
+	a3vertexDrawableRenderActive();
 	//*/
 
 	// blur half-size
@@ -548,29 +546,32 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 	//		-> 2) bind first color texture from framebuffer used in previous pass
 	//		-> 3) send blur axis as uniform (2D vector)
 	//		-> 4) draw full-screen quad (already active
-	sampleAxisH = a3vec2_x;	// delete this line; variable is already initialized
-	/*
+	//sampleAxisH = a3vec2_x;	// delete this line; variable is already initialized
+	///*
 	currentPass = pipelines_passBlurH_2;
 	currentWriteFBO = writeFBO[currentPass];
 	currentReadFBO = readFBO[currentPass][0];
-	???
-	???
-	???
-	???
-	*/
+	
+	a3framebufferActivate(currentWriteFBO);
+	a3framebufferBindColorTexture(currentReadFBO, a3tex_unit00, 5);
+	a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uAxis, 1, a3vec2_x.v);
+	a3vertexDrawableRenderActive();
+	//*/
 
 	// ****TO-DO: 
 	//	-> 3.1c: repeat previous pass but using vertical axis
-	sampleAxisV = a3vec2_y;	// delete this line; variable is already initialized
-	/*
+	//sampleAxisV = a3vec2_y;	// delete this line; variable is already initialized
+
+	///*
 	currentPass = pipelines_passBlurV_2;
 	currentWriteFBO = writeFBO[currentPass];
 	currentReadFBO = readFBO[currentPass][0];
-	???
-	???
-	???
-	???
-	*/
+
+	a3framebufferActivate(currentWriteFBO);
+	a3framebufferBindColorTexture(currentReadFBO, a3tex_unit00, 6);
+	a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uAxis, 1, a3vec2_y.v);
+	a3vertexDrawableRenderActive();
+	//*/
 
 	// ****TO-DO: 
 	//	-> 4.1f: repeat bright pass and blur passes on smaller FBOs

@@ -33,8 +33,16 @@
 
 out vec4 rtFragColor;
 
+uniform sampler2D uTex_dm; //1
+in vec2 vTexCoord; //2
+
+vec4 sampedColors;
+vec4 mixedColor = vec4(1, 1, 1, 1.0);
+float invNum = 1.0;
+
 void main()
 {
 	// DUMMY OUTPUT: all fragments are OPAQUE LIGHT GREY
-	rtFragColor = vec4(0.5, 0.5, 0.5, 1.0);
+	sampedColors = texture(uTex_dm, vTexCoord) * mixedColor; //3
+	rtFragColor = sampedColors; //4 and 5
 }
