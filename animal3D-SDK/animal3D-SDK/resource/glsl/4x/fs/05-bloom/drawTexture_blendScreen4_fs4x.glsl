@@ -31,11 +31,32 @@
 //	3) use screen function to sample input textures
 
 uniform sampler2D uImage00;
+uniform sampler2D uImage01;
+uniform sampler2D uImage02;
+uniform sampler2D uImage03;
+in vec2 vTexCoord;
 
 layout (location = 0) out vec4 rtFragColor;
+
+vec4 inverse(in vec4 inverted){
+	inverted[0] = 1 - inverted[0];
+	inverted[1] = 1 - inverted[1];
+	inverted[2] = 1 - inverted[2];
+	inverted[3] = 1 - inverted[3];
+
+	return inverted;
+}
 
 void main()
 {
 	// DUMMY OUTPUT: all fragments are OPAQUE YELLOW
-	rtFragColor = vec4(1.0, 1.0, 0.0, 1.0);
+	vec4 input_0 = texture(uImage00, vTexCoord);
+	vec4 input_1 = texture(uImage01, vTexCoord);
+	vec4 input_2 = texture(uImage02, vTexCoord);
+	vec4 input_3 = texture(uImage03, vTexCoord);
+
+	vec4 tempResult = inverse(input_0) * inverse(input_1) * inverse(input_2) * inverse(input_3);
+
+	//rtFragColor = vec4(inverse(tempResult).rgb, 1.0);
+	rtFragColor = inverse(tempResult);
 }

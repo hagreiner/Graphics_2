@@ -34,11 +34,10 @@ layout (location = 0) out vec4 rtFragColor;
 in vec2 vTexCoord;
 uniform sampler2D uImage00;
 
-uniform vec2 direction; //pixel size
-uniform vec2 a3vec2_x; //axis x
-uniform vec2 a3vec2_y; //axis y
+uniform vec2 uSize; //pixel size
+uniform vec2 uAxis; //axis 
 
-vec4 blurGaussianTwo(sampler2D image, vec2 center, vec2 direction){
+vec4 blurGaussianTwo(in sampler2D image, in vec2 center, in vec2 direction){
 	vec4 c = vec4(0.0);
 	c += texture(image, center) * 2.0;
 	c += texture(image, center + direction);
@@ -46,10 +45,33 @@ vec4 blurGaussianTwo(sampler2D image, vec2 center, vec2 direction){
 	return (c/4.0);
 }
 
+vec4 blurGaussianVersionTwo(in sampler2D image, in vec2 center, in vec2 direction, in float blurNum){	
+	//https://community.khronos.org/t/dinamic-gaussian-kernel/53011
+	int loopNum = int(blurNum);
+	float doublePI = 2 * 3.14;
+
+	vec4 c = texture(image, center);
+
+	for(int i = 1; i <= loopNum; i++)
+	{
+		float blurCoeff = exp(-float(i * i)/float(2 * blurNum * blurNum));
+
+		c += (texture(image, center - float(i) * direction)) * blurCoeff;
+		c += (texture(image, center + float(i) * direction)) * blurCoeff;
+	}
+
+	c *= 1/(sqrt(doublePI)*blurNum*0.8);
+
+	return c;
+}
+
 void main()
 {
 	// DUMMY OUTPUT: all fragments are OPAQUE CYAN
-	vec4 color = blurGaussianTwo(uImage00, vTexCoord, direction);
-	
-	rtFragColor = color;
+	//vec4 color = blurGaussianTwo(uImage00, vTexCoord, uAxis);
+	//rtFragColor = vec4(color.rgb, 1.0);
+
+	float blurAmount = 2.0;
+
+	rtFragColor = blurGaussianVersionTwo(uImage00,vTexCoord, uSize, blurAmount);
 }
