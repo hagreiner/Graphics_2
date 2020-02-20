@@ -488,7 +488,7 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 	case pipelines_deferred_shading: {
 		// ****TO-DO: 
 		//	-> 2.1a: uncomment deferred shading g-buffer pass
-		/*
+		///*
 		// draw objects as-is
 		for (k = 0,
 			currentSceneObject = demoState->planeObject, endSceneObject = demoState->teapotObject;
@@ -498,7 +498,7 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 			a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uAtlas, 1, atlas[k]->mm);
 			a3demo_drawModelLighting(modelViewProjectionMat.m, modelViewMat.m, viewProjectionMat.m, viewMat.m, currentSceneObject->modelMat.m, currentDemoProgram, drawable[k], rgba4[k + 3].v);
 		}
-		*/
+		//*/
 	}	break;
 		// end deferred shading scene pass
 
@@ -506,7 +506,7 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 	case pipelines_deferred_lighting: {
 		// ****TO-DO: 
 		//	-> 2.1a: uncomment deferred lighting g-buffer pass
-		/*
+		///*
 		// same as above
 		for (k = 0,
 			currentSceneObject = demoState->planeObject, endSceneObject = demoState->teapotObject;
@@ -516,7 +516,7 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 			a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uAtlas, 1, atlas[k]->mm);
 			a3demo_drawModelLighting(modelViewProjectionMat.m, modelViewMat.m, viewProjectionMat.m, viewMat.m, currentSceneObject->modelMat.m, currentDemoProgram, drawable[k], rgba4[k + 3].v);
 		}
-		*/
+		//*/
 
 		// ****TO-DO: 
 		//	-> 4.1a: uncomment deferred light pre-pass (drawing volumes)
