@@ -33,6 +33,7 @@
 layout (location = 1) out vec4 rtViewPosition;
 layout (location = 2) out vec4 rtViewNormal;
 layout (location = 3) out vec4 rtAtlasTexcoord;
+layout (location = 4) out vec4 rtBias;
 
 in vbLightingData {
 	vec4 vViewPosition;
@@ -46,8 +47,11 @@ void main()
 	// DUMMY OUTPUT: all fragments are OPAQUE RED, GREEN AND BLUE
 	rtViewPosition = vViewPosition / vViewPosition.w; //perpective div (see shadows lab)
 
-	vec4 biasEdits = vBiasedClipCoord / vBiasedClipCoord.w;
-	rtViewNormal = normalize(vViewNormal) * 2 * vViewPosition.w; // not correct
+	rtViewNormal =  vec4((normalize(vViewNormal) / 2.0 + .5).rgb, 1.0);
+	//https://learnopengl.com/Advanced-Lighting/Normal-Mapping
 	
 	rtAtlasTexcoord = vTexcoord;
+
+	
+	rtBias = vBiasedClipCoord / vBiasedClipCoord.w; //perpective div (see shadows lab)
 }

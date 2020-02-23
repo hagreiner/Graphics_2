@@ -597,7 +597,7 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 	case pipelines_deferred_shading:
 		// ****TO-DO: 
 		//	-> 3.1a: uncomment deferred shading composite
-		/*
+		///*
 		// use deferred shading program
 		currentDemoProgram = demoState->prog_drawPhong_multi_deferred;
 		a3shaderProgramActivate(currentDemoProgram->program);
@@ -618,7 +618,7 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 		a3shaderUniformSendFloat(a3unif_single, currentDemoProgram->uLightSzInvSq, demoState->forwardLightCount, lightSzInvSq);
 		a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uLightPos, demoState->forwardLightCount, lightPos->v);
 		a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uLightCol, demoState->forwardLightCount, lightCol->v);
-		*/
+		//*/
 		break;
 
 	case pipelines_deferred_lighting:

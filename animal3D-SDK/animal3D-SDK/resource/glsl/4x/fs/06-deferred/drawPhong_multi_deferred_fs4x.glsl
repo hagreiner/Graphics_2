@@ -39,19 +39,80 @@
 //			-> surface texture coordinate is used as-is once sampled
 
 in vec4 vTexcoord;
+vec2 textCoord = vec2(vTexcoord);
+
+uniform sampler2D uTex_dm; //0.1
+uniform sampler2D uTex_sm; //0.1
+//postion, normal, texcoord, depth
+uniform sampler2D uImage01; 
+uniform sampler2D uImage02; 
+uniform sampler2D uImage03; 
+uniform sampler2D uImage07; 
+
+
+vec2 tcCord = texture(uImage03, textCoord).xy; 
+vec4 tcMap = texture(uImage03, textCoord); 
+vec4 normalMap = texture(uImage02, textCoord);
+vec4 posSample = texture(uImage01, textCoord);
+vec4 depthMap = texture(uImage07, textCoord); 
+
+vec4 specMap = texture(uTex_sm, tcCord);
+vec4 diffuseMap = texture(uTex_dm, tcCord);
 
 layout (location = 0) out vec4 rtFragColor;
+layout (location = 1) out vec4 rtPosition;
+layout (location = 2) out vec4 rtNormal;
+layout (location = 3) out vec4 rtAtlasCoordinate;
 layout (location = 4) out vec4 rtDiffuseMapSample;
 layout (location = 5) out vec4 rtSpecularMapSample;
 layout (location = 6) out vec4 rtDiffuseLightTotal;
 layout (location = 7) out vec4 rtSpecularLightTotal;
 
+//0.2
+const int size = 12;
+uniform vec4 uLightPos[size];
+uniform int uLightCt;
+uniform float uLightSz[size];
+uniform float uLightSzInvSq[size];
+uniform vec4 uLightCol[size];;
+
 void main()
 {
-	// DUMMY OUTPUT: all fragments are OPAQUE CYAN (and others)
-	rtFragColor = vec4(0.0, 1.0, 1.0, 1.0);
-	rtDiffuseMapSample = vec4(0.0, 0.0, 1.0, 1.0);
-	rtSpecularMapSample = vec4(0.0, 1.0, 0.0, 1.0);
-	rtDiffuseLightTotal = vec4(1.0, 0.0, 1.0, 1.0);
-	rtSpecularLightTotal = vec4(1.0, 1.0, 0.0, 1.0);
+	float diffuseCoef = 0.0;
+	float specularCoef = 0.0;
+	vec3 color = vec3(0.0, 0.0, 0.0);
+	vec3 diffuseTotal;
+	vec3 specTotal;
+	
+	// https://www.tomdalling.com/blog/modern-opengl/07-more-lighting-ambient-specular-attenuation-gamma/
+	float attenuation = 0.0;
+	vec3 N = vec3(normalize(normalMap) * 2 - 0.35).rgb;
+	
+	for (int index=0; index < size && index < uLightCt; index++){
+		vec3 L = normalize(uLightPos[index] - posSample).xyz;
+		vec3 R = reflect(-L, N);
+		vec3 V = normalize(posSample.xyz);
+		float lightDistance = length(uLightPos[index] - posSample);
+	
+		diffuseCoef = max(dot(N, L), 0);
+		specularCoef = pow(max(dot(R, V), 0), 30);
+	
+		attenuation = 1 / (1 + uLightSzInvSq[index] * (lightDistance * lightDistance));
+		
+		diffuseTotal += diffuseCoef * uLightCol[index].xyz;
+		specTotal += specularCoef * uLightCol[index].xyz;
+	
+		color += attenuation * ((diffuseCoef * diffuseMap.xyz * uLightCol[index].xyz * 0.7) + 
+		(specularCoef * specMap.xyz * uLightCol[index].xyz * 0.7));
+	}
+	
+	rtFragColor = vec4(color, 1.0);
+	rtDiffuseMapSample = diffuseMap;
+	rtSpecularMapSample = specMap;
+	rtDiffuseLightTotal = vec4(diffuseTotal, 1.0);
+	rtSpecularLightTotal = vec4(specTotal, 1.0);
+
+	rtPosition = posSample;
+	rtNormal = vec4(N, 1.0);
+	rtAtlasCoordinate = tcMap;
 }
