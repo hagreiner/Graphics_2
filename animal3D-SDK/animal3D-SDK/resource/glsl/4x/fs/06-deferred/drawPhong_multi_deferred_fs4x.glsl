@@ -47,18 +47,10 @@ uniform sampler2D uTex_sm; //0.1
 uniform sampler2D uImage01; //pos
 uniform sampler2D uImage02; //normal
 uniform sampler2D uImage03; //coord
-uniform sampler2D uImage07; //depth - not correct
+uniform sampler2D uImage04; //bias pos
+//uniform sampler2D uImage07; //depth - not needed
 
-
-vec2 tcCord = texture(uImage03, textCoord).xy; 
-vec4 tcMap = texture(uImage03, textCoord); 
-
-vec4 normalMap = texture(uImage02, textCoord);
-vec4 posSample = texture(uImage01, textCoord);
-vec4 depthMap = texture(uImage07, textCoord); 
-
-vec4 specMap = texture(uTex_sm, tcCord);
-vec4 diffuseMap = texture(uTex_dm, tcCord);
+uniform uPB_inv; //check
 
 layout (location = 0) out vec4 rtFragColor;
 layout (location = 1) out vec4 rtPosition;
@@ -79,6 +71,20 @@ uniform vec4 uLightCol[size];;
 
 void main()
 {
+	vec2 tcCord = texture(uImage03, textCoord).xy; 
+	vec4 tcMap = texture(uImage03, textCoord); 
+
+	vec4 normalMap = texture(uImage02, textCoord);
+	vec3 N = vec3(normalMap * 2 - 1).rgb;
+
+	vec4 biasSample = texture(uImage04, textCoord);
+	biasSample *= uPB_inv;
+	biasSample /= biasSample.w;
+	
+
+	vec4 specMap = texture(uTex_sm, tcCord);
+	vec4 diffuseMap = texture(uTex_dm, tcCord);
+
 	float diffuseCoef = 0.0;
 	float specularCoef = 0.0;
 	vec3 color = vec3(0.0, 0.0, 0.0);
@@ -87,7 +93,6 @@ void main()
 	
 	// https://www.tomdalling.com/blog/modern-opengl/07-more-lighting-ambient-specular-attenuation-gamma/
 	float attenuation = 0.0;
-	vec3 N = vec3(normalize(normalMap) * 2 - 0.35).rgb;
 	
 	for (int index=0; index < size && index < uLightCt; index++){
 		vec3 L = normalize(uLightPos[index] - posSample).xyz;
