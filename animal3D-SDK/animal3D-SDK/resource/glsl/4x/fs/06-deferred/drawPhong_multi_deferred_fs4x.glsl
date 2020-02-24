@@ -30,7 +30,7 @@
 // ****TO-DO: 
 //	0) copy original forward Phong shader
 //	1) declare g-buffer textures as uniform samplers
-//	2) declare light data as uniform block
+//	2) declare light data as uniform block - **typo**
 //	3) replace geometric information normally received from fragment shader 
 //		with samples from respective g-buffer textures; use to compute lighting
 //			-> position calculated using reverse perspective divide; requires 
@@ -43,15 +43,16 @@ vec2 textCoord = vec2(vTexcoord);
 
 uniform sampler2D uTex_dm; //0.1
 uniform sampler2D uTex_sm; //0.1
-//postion, normal, texcoord, depth
-uniform sampler2D uImage01; 
-uniform sampler2D uImage02; 
-uniform sampler2D uImage03; 
-uniform sampler2D uImage07; 
+
+uniform sampler2D uImage01; //pos
+uniform sampler2D uImage02; //normal
+uniform sampler2D uImage03; //coord
+uniform sampler2D uImage07; //depth - not correct
 
 
 vec2 tcCord = texture(uImage03, textCoord).xy; 
 vec4 tcMap = texture(uImage03, textCoord); 
+
 vec4 normalMap = texture(uImage02, textCoord);
 vec4 posSample = texture(uImage01, textCoord);
 vec4 depthMap = texture(uImage07, textCoord); 
