@@ -520,7 +520,7 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 
 		// ****TO-DO: 
 		//	-> 4.1a: uncomment deferred light pre-pass (drawing volumes)
-		/*
+		///*
 		// move on to light pre-pass
 		currentPass = pipelines_passLighting;
 		currentWriteFBO = writeFBO[currentPass];
@@ -553,7 +553,7 @@ void a3pipelines_render(a3_DemoState const* demoState, a3_Demo_Pipelines const* 
 		}
 		glCullFace(GL_BACK);
 		glDisable(GL_BLEND);
-		*/
+		//*/
 	}	break;
 		// end deferred lighting scene pass
 	}

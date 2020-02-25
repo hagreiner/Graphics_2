@@ -39,12 +39,88 @@
 in vec4 vBiasedClipCoord;
 flat in int vInstanceID;
 
-layout (location = 6) out vec4 rtDiffuseLight;
-layout (location = 7) out vec4 rtSpecularLight;
+//layout (location = 6) out vec4 rtDiffuseLight;
+//layout (location = 7) out vec4 rtSpecularLight;
+
+struct sPointLight {
+		vec4 worldPos;					// position in world space
+		vec4 viewPos;						// position in viewer space
+		vec4 color;						// RGB color with padding
+		float radius;						// radius (distance of effect from center)
+		float radiusInvSq;					// radius inverse squared (attenuation factor)
+		float pad[2];						// padding
+};
+
+uniform vbPointLighting {
+	sPointLight uLight[MAX_LIGHTS];
+};
+
+//in vec4 vTexcoord;
+
+uniform sampler2D uImage01; //bias pos
+uniform sampler2D uImage02; //normal
+uniform sampler2D uImage03; //coord
+uniform sampler2D uImage04; //diffuse
+uniform sampler2D uImage05; //spec
+
+uniform mat4 uPB_inv;
+
+//layout (location = 0) out vec4 rtFragColor;
+//layout (location = 1) out vec4 rtPosition;
+//layout (location = 2) out vec4 rtNormal;
+//layout (location = 3) out vec4 rtAtlasCoordinate;
+//layout (location = 4) out vec4 rtDiffuseMapSample;
+//layout (location = 5) out vec4 rtSpecularMapSample;
+layout (location = 6) out vec4 rtDiffuseLightTotal;
+layout (location = 7) out vec4 rtSpecularLightTotal;
+
+//0.2
+const int size = 12;
+uniform vec4 uLightPos[MAX_LIGHTS];
+uniform int uLightCt;
+uniform float uLightSz[MAX_LIGHTS];
+uniform float uLightSzInvSq[MAX_LIGHTS];
+uniform vec4 uLightCol[MAX_LIGHTS];
 
 void main()
 {
-	// DUMMY OUTPUT: all fragments are OPAQUE MAGENTA
-	rtDiffuseLight = vec4(1.0, 0.0, 1.0, 1.0);
-	rtSpecularLight = vec4(1.0, 0.0, 1.0, 1.0);
+	vec2 textCoord = (vBiasedClipCoord / vBiasedClipCoord.w).xy;
+	vec2 tsCord = texture(uImage03, textCoord).xy; 
+	vec4 tcMap = texture(uImage03, textCoord); 
+
+	vec3 N = texture(uImage02, textCoord).rgb;
+
+	vec4 biasSample = texture(uImage01, textCoord);
+	biasSample = uPB_inv* biasSample;
+	biasSample = biasSample / biasSample.w;
+	
+	vec4 diffuseMap = texture(uImage04, tsCord);
+	vec4 specMap = texture(uImage05, tsCord);
+	
+	vec3 L = normalize(uLight[vInstanceID].viewPos.xyz - biasSample.xyz); 
+	vec3 R = reflect(-L, N);
+	vec3 V = normalize(-biasSample.xyz);
+	float lightDistance = length(biasSample.xyz- uLight[vInstanceID].viewPos.xyz); 
+	
+	// https://www.tomdalling.com/blog/modern-opengl/07-more-lighting-ambient-specular-attenuation-gamma/
+	// https://thebookofshaders.com/glossary/?search=smoothstep
+	float attenuation = smoothstep(uLight[vInstanceID].radius, 0, lightDistance);
+	
+	float diffuseCoef = max(dot(N, L), 0);
+	float specularCoef = pow(max(dot(R, V), 0), 30);
+
+	vec4 diffuseTotal = diffuseCoef * uLight[vInstanceID].color;
+	vec4 specTotal = specularCoef * uLight[vInstanceID].color;
+	
+	vec4 color = attenuation * (diffuseTotal + specTotal);
+	
+	//rtFragColor = color;
+	//rtDiffuseMapSample = diffuseMap;
+	//rtSpecularMapSample = specMap;
+	rtDiffuseLightTotal = diffuseTotal;
+	rtSpecularLightTotal = specTotal;
+
+	//rtPosition = biasSample;
+	//rtNormal = vec4(N, 1.0);
+	//rtAtlasCoordinate = tcMap;
 }

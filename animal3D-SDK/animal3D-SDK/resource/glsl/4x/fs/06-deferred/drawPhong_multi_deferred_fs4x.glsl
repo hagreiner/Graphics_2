@@ -39,18 +39,14 @@
 //			-> surface texture coordinate is used as-is once sampled
 
 in vec4 vTexcoord;
-vec2 textCoord = vec2(vTexcoord);
 
-uniform sampler2D uTex_dm; //0.1
-uniform sampler2D uTex_sm; //0.1
-
-uniform sampler2D uImage01; //pos
+uniform sampler2D uImage01; //bias pos
 uniform sampler2D uImage02; //normal
 uniform sampler2D uImage03; //coord
-uniform sampler2D uImage04; //bias pos
-//uniform sampler2D uImage07; //depth - not needed
+uniform sampler2D uImage04; //diffuse
+uniform sampler2D uImage05; //spec
 
-uniform uPB_inv; //check
+uniform mat4 uPB_inv;
 
 layout (location = 0) out vec4 rtFragColor;
 layout (location = 1) out vec4 rtPosition;
@@ -63,27 +59,28 @@ layout (location = 7) out vec4 rtSpecularLightTotal;
 
 //0.2
 const int size = 12;
-uniform vec4 uLightPos[size];
+uniform vec4 uLightPos[MAX_LIGHTS];
 uniform int uLightCt;
-uniform float uLightSz[size];
-uniform float uLightSzInvSq[size];
-uniform vec4 uLightCol[size];;
+uniform float uLightSz[MAX_LIGHTS];
+uniform float uLightSzInvSq[MAX_LIGHTS];
+uniform vec4 uLightCol[MAX_LIGHTS];
 
 void main()
 {
-	vec2 tcCord = texture(uImage03, textCoord).xy; 
+	vec2 textCoord = vTexcoord.xy;
+	vec2 tsCord = texture(uImage03, textCoord).xy; 
 	vec4 tcMap = texture(uImage03, textCoord); 
 
 	vec4 normalMap = texture(uImage02, textCoord);
-	vec3 N = vec3(normalMap * 2 - 1).rgb;
+	vec3 N = (normalMap * 2 - 1).rgb;
 
-	vec4 biasSample = texture(uImage04, textCoord);
-	biasSample *= uPB_inv;
-	biasSample /= biasSample.w;
+	//vBiasedClipCoord = uPB * vViewPosition;
+	vec4 biasSample = texture(uImage01, textCoord);
+	biasSample = uPB_inv* biasSample ;
+	biasSample = biasSample / biasSample.w;
 	
-
-	vec4 specMap = texture(uTex_sm, tcCord);
-	vec4 diffuseMap = texture(uTex_dm, tcCord);
+	vec4 diffuseMap = texture(uImage04, tsCord);
+	vec4 specMap = texture(uImage05, tsCord);
 
 	float diffuseCoef = 0.0;
 	float specularCoef = 0.0;
@@ -95,10 +92,10 @@ void main()
 	float attenuation = 0.0;
 	
 	for (int index=0; index < size && index < uLightCt; index++){
-		vec3 L = normalize(uLightPos[index] - posSample).xyz;
+		vec3 L = normalize(uLightPos[index] - biasSample).xyz;
 		vec3 R = reflect(-L, N);
-		vec3 V = normalize(posSample.xyz);
-		float lightDistance = length(uLightPos[index] - posSample);
+		vec3 V = normalize(-biasSample.xyz);  //dont forget about this, put the '-' in front
+		float lightDistance = length(uLightPos[index] - biasSample);
 	
 		diffuseCoef = max(dot(N, L), 0);
 		specularCoef = pow(max(dot(R, V), 0), 30);
@@ -108,8 +105,8 @@ void main()
 		diffuseTotal += diffuseCoef * uLightCol[index].xyz;
 		specTotal += specularCoef * uLightCol[index].xyz;
 	
-		color += attenuation * ((diffuseCoef * diffuseMap.xyz * uLightCol[index].xyz * 0.7) + 
-		(specularCoef * specMap.xyz * uLightCol[index].xyz * 0.7));
+		color += attenuation * ((diffuseCoef * diffuseMap.xyz * uLightCol[index].xyz) + 
+		(specularCoef * specMap.xyz * uLightCol[index].xyz)); //took the tone down off
 	}
 	
 	rtFragColor = vec4(color, 1.0);
@@ -118,7 +115,7 @@ void main()
 	rtDiffuseLightTotal = vec4(diffuseTotal, 1.0);
 	rtSpecularLightTotal = vec4(specTotal, 1.0);
 
-	rtPosition = posSample;
+	rtPosition = biasSample;
 	rtNormal = vec4(N, 1.0);
 	rtAtlasCoordinate = tcMap;
 }
