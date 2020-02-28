@@ -106,6 +106,9 @@
     <Filter Include="Resource Files\A3_DEMO\glsl\4x\fs\07-curves">
       <UniqueIdentifier>{1540b83f-7619-43c7-94ac-ddab1b7c7c2b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\A3_DEMO\glsl\4x\fs\midterm">
+      <UniqueIdentifier>{47fb1f3a-c09f-4c8d-81c5-9699ef75dcf9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="_src_win\main_dll.c">
@@ -312,6 +315,12 @@
     </None>
     <None Include="..\..\..\resource\glsl\4x\gs\07-curves\drawCurveSegment_gs4x.glsl">
       <Filter>Resource Files\A3_DEMO\glsl\4x\gs\07-curves</Filter>
+    </None>
+    <None Include="..\..\..\resource\glsl\4x\fs\midterm\drawFractal_fs4x.glsl">
+      <Filter>Resource Files\A3_DEMO\glsl\4x\fs\midterm</Filter>
+    </None>
+    <None Include="..\..\..\resource\glsl\4x\vs\02-shading\passTexcoordFractal_transform_vs4x.glsl">
+      <Filter>Resource Files\A3_DEMO\glsl\4x\vs\02-shading</Filter>
     </None>
   </ItemGroup>
 </Project>

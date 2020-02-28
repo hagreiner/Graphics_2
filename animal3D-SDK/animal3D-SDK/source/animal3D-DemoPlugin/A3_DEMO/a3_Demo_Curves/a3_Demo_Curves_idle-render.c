@@ -768,7 +768,7 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 		a3framebufferDeactivateSetViewport(a3fbo_depthDisable,
 			-demoState->frameBorder, -demoState->frameBorder, demoState->frameWidth, demoState->frameHeight);
 		currentDrawable = demoState->draw_unitquad;
-		currentDemoProgram = demoState->prog_drawTexture;
+		currentDemoProgram = demoState->prog_drawFractal;
 		a3vertexDrawableActivate(currentDrawable);
 		a3shaderProgramActivate(currentDemoProgram->program);
 		a3framebufferBindColorTexture(currentWriteFBO, a3tex_unit00, 0);
