@@ -109,7 +109,7 @@ void main()
 		(specularCoef * specMap.xyz * uLightCol[index].xyz)); //took the tone down off
 	}
 	
-	rtFragColor = vec4(color, 1.0);
+	rtFragColor = vec4(color, diffuseMap.a);
 	rtDiffuseMapSample = diffuseMap;
 	rtSpecularMapSample = specMap;
 	rtDiffuseLightTotal = vec4(diffuseTotal, 1.0);
