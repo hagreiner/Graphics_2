@@ -33,6 +33,7 @@
 out vec4 rtFragColor;
 in vec2 vTexCoord;
 uniform vec2 uAxis;
+uniform float uTime;
 
 const int iterations = 100;
 const vec2 center = vec2(0.0);
@@ -42,12 +43,14 @@ const vec3 color_3 = vec3(1.0, 0.5, 0.0);
 const vec3 color_4 = vec3(1.0, 1.0, 0.0);
 const vec3 color_5 = vec3(1.0, 0.5, 1.0);
 const vec3 color_6 = vec3(1.0, 1.0, 1.0);
-const float zoom = 0.75;
+const vec3 color_7 = vec3(1.0, 1.0, 0.0);
+const vec3 color_8 = vec3(0.5, 1.0, 0.5);
+float zoom = 5;
 
 void main()
 {
-    float realTemp  = vTexCoord.x * (zoom) + uAxis.x; 
-    float imagTemp  = vTexCoord.y * (zoom) + uAxis.y; 
+    float realTemp  = (vTexCoord.x + uAxis.x - 0.75)*zoom; 
+    float imagTemp  = (vTexCoord.y + uAxis.y - 0.50)*zoom; 
     float RealFloat = realTemp;
     float ImaginaryFloat = imagTemp;
 
@@ -66,7 +69,8 @@ void main()
     // color apply
     vec3 color;
     if (combinedFloat < 5.0) { color = mix(color_3, color_4, fract(index*0.1)); }
-    else if (combinedFloat > 10.0) { color = mix(color_4, color_5, float(index)*0.1); }
+    else if (combinedFloat > 10.0 && combinedFloat < 20.0 ) { color = mix(color_4, color_5, float(index)*0.1); }
+    else if (combinedFloat > 20.0) { color = mix(color_7, color_8, float(index)*0.04); }
     else { color = mix(color_1, color_2, float(index)*0.04); }
 
     color = clamp(color, 0.0, 1.0);
