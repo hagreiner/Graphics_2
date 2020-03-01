@@ -51,11 +51,11 @@ void main()
 {
     float time = float(uTime) * pow(2.0, float(uTime)/4.0);
     zoom /= time;
-    float xOffset = 0.75;
+    float xOffset = 0.58;
     float yOffset = 0.50;
 
-    float realTemp  = (vTexCoord.x + uAxis.x - xOffset)*zoom; 
-    float imagTemp  = (vTexCoord.y + uAxis.y - yOffset)*zoom; 
+    float realTemp  = (vTexCoord.x + uAxis.x - xOffset) * zoom; 
+    float imagTemp  = (vTexCoord.y + uAxis.y - yOffset) * zoom; 
     float RealFloat = realTemp;
     float ImaginaryFloat = imagTemp;
 
