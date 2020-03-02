@@ -32,7 +32,6 @@
 
 out vec4 rtFragColor;
 in vec2 vTexCoord;
-uniform vec2 uAxis;
 uniform double uTime;
 
 const int iterations = 100;
@@ -45,17 +44,17 @@ const vec3 color_5 = vec3(1.0, 0.5, 1.0);
 const vec3 color_6 = vec3(1.0, 1.0, 1.0);
 const vec3 color_7 = vec3(1.0, 1.0, 0.0);
 const vec3 color_8 = vec3(0.5, 1.0, 0.5);
-float zoom = 50;
+float zoom = 25;
 
 void main()
 {
-    float time = float(uTime) * pow(2.0, float(uTime)/4.0);
+    float time = pow(2, float(uTime)/2.0);
     zoom /= time;
-    float xOffset = 0.58;
+    float xOffset = 0.59;
     float yOffset = 0.50;
 
-    float realTemp  = (vTexCoord.x + uAxis.x - xOffset) * zoom; 
-    float imagTemp  = (vTexCoord.y + uAxis.y - yOffset) * zoom; 
+    float realTemp  = (vTexCoord.x - xOffset) * zoom; 
+    float imagTemp  = (vTexCoord.y - yOffset) * zoom; 
     float RealFloat = realTemp;
     float ImaginaryFloat = imagTemp;
 
