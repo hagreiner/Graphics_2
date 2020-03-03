@@ -102,6 +102,9 @@ extern "C"
 				uAxis,						// generic axis
 				uSize,						// generic size
 				uTime;						// time
+			a3i32
+				//midterm
+				u2DPosition;
 		};
 
 		// uniform blocks

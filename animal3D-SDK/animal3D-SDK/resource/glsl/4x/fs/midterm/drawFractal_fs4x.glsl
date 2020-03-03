@@ -33,6 +33,7 @@
 out vec4 rtFragColor;
 in vec2 vTexCoord;
 uniform double uTime;
+uniform vec2 u2DPosition;
 
 const int iterations = 100;
 const vec2 center = vec2(0.0);
@@ -50,8 +51,8 @@ void main()
 {
     float time = pow(2, float(uTime)/2.0);
     zoom /= time;
-    float xOffset = 0.59;
-    float yOffset = 0.50;
+    float xOffset = u2DPosition.x;
+    float yOffset = u2DPosition.y;
 
     float realTemp  = (vTexCoord.x - xOffset) * zoom; 
     float imagTemp  = (vTexCoord.y - yOffset) * zoom; 

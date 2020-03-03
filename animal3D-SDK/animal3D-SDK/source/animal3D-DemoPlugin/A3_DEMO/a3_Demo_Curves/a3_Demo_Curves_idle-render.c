@@ -773,6 +773,7 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 		a3shaderProgramActivate(currentDemoProgram->program);
 		a3framebufferBindColorTexture(currentWriteFBO, a3tex_unit00, 0);  //midterm change
 		a3shaderUniformSendDouble(a3unif_single, currentDemoProgram->uTime, 1, &demoState->renderTimer->totalTime);
+		a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->u2DPosition, 1, demoState->offsetPostion.v);
 		a3vertexDrawableRenderActive();
 	}
 

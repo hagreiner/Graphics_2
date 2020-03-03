@@ -789,6 +789,9 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 		a3demo_setUniformDefaultVec4(currentDemoProg, uLightPos, a3vec4_w.v);
 		a3demo_setUniformDefaultVec4(currentDemoProg, uLightCol, a3vec4_one.v);
 		a3demo_setUniformDefaultVec4(currentDemoProg, uColor, a3vec4_one.v);
+		
+		//midterm
+		a3demo_setUniformDefaultVec4(currentDemoProg, u2DPosition, a3vec2_one.v);
 
 		// common texture
 		a3demo_setUniformDefaultInteger(currentDemoProg, uTex_dm, defaultTexUnits + 0);

@@ -144,6 +144,9 @@ extern "C"
 		a3real frameWidthInv, frameHeightInv, frameAspect;
 		a3i32 frameBorder;
 
+		//midterm
+		a3vec2 offsetPostion;
+
 
 		//---------------------------------------------------------------------
 		// objects that have known or fixed instance count in the whole demo

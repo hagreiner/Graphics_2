@@ -101,6 +101,9 @@ void a3demo_update_scene(a3_DemoState *demoState, a3f64 dt)
 		0.5f, 0.5f, 0.5f, 1.0f,
 	};
 
+	//midterm
+	demoState->offsetPostion.x = 0.5f + (a3real)a3keyboardGetDifference(demoState->keyboard, a3key_D, a3key_A);
+	demoState->offsetPostion.y = 0.5f + (a3real)a3keyboardGetDifference(demoState->keyboard, a3key_S, a3key_W);
 
 	// tmp matrix for scale
 	a3mat4 scaleMat = a3mat4_identity;
