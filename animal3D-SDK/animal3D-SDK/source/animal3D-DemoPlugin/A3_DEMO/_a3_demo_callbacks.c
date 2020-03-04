@@ -430,8 +430,69 @@ A3DYLIBSYMBOL void a3demoCB_keyCharPress(a3_DemoState *demoState, a3i32 asciiKey
 		a3demo_unloadShaders(demoState);
 		a3demo_loadShaders(demoState);
 		break;
-	}
 
+	//midterm
+	case'w':
+		demoState->offsetPostion.y -= 0.000001f;
+		break;							 
+	case's':							 
+		demoState->offsetPostion.y += 0.000001f;
+		break;							 
+	case'a':							 
+		demoState->offsetPostion.x += 0.000001f;
+		break;							 
+	case'd':							 
+		demoState->offsetPostion.x -= 0.000001f;
+		break;							 
+	case'!':							 
+		demoState->offsetPostion.y -= 0.0001f;
+		break;							 
+	case'@':							 
+		demoState->offsetPostion.y += 0.0001f;
+		break;							 
+	case'#':							 
+		demoState->offsetPostion.x += 0.0001f;
+		break;							 
+	case'$':							 
+		demoState->offsetPostion.x -= 0.0001f;
+		break;
+
+	case 'o':
+		demoState->baseColor1.x = 1.0f;
+		demoState->baseColor1.y = 0.5f;
+		demoState->baseColor1.z = 0.0f;
+									 
+		demoState->baseColor2.x = 1.0f;
+		demoState->baseColor2.y = 1.0f;
+		demoState->baseColor2.z = 0.0f;
+									 
+		demoState->baseColor3.x = 1.0f;
+		demoState->baseColor3.y = 1.0f;
+		demoState->baseColor3.z = 0.5f;
+									 
+		demoState->baseColor4.x = 1.0f;
+		demoState->baseColor4.y = 0.2f;
+		demoState->baseColor4.z = 0.0f;
+		break;
+	
+	case 'b':
+		demoState->baseColor1.x = 0.0f;
+		demoState->baseColor1.y = 0.6f;
+		demoState->baseColor1.z = 1.0f;
+									 
+		demoState->baseColor2.x = 0.0f;
+		demoState->baseColor2.y = 1.0f;
+		demoState->baseColor2.z = 1.0f;
+									 
+		demoState->baseColor3.x = 0.75f;
+		demoState->baseColor3.y = 1.0f;
+		demoState->baseColor3.z = 1.0f;
+									 
+		demoState->baseColor4.x = 0.0f;
+		demoState->baseColor4.y = 0.2f;
+		demoState->baseColor4.z = 1.0f;
+		break;
+	}
 
 	// demo callback
 	a3demoCB_input_keyCharPress(demoState, asciiKey);
@@ -444,10 +505,40 @@ A3DYLIBSYMBOL void a3demoCB_keyCharHold(a3_DemoState *demoState, a3i32 asciiKey)
 	a3keyboardSetStateASCII(demoState->keyboard, (a3byte)asciiKey);
 
 	// handle special cases immediately
-//	switch (asciiKey)
-//	{
-//
-//	}
+ 	switch (asciiKey)
+ 	{
+	case'w':
+		demoState->offsetPostion.y -= 0.001f;
+		break;
+	case's':
+		demoState->offsetPostion.y += 0.001f;
+		break;
+	case'a':
+		demoState->offsetPostion.x += 0.001f;
+		break;
+	case'd':
+		demoState->offsetPostion.x -= 0.001f;
+		break;
+	case'!':
+		demoState->offsetPostion.y -= 0.0001f;
+		break;
+	case'@':
+		demoState->offsetPostion.y += 0.0001f;
+		break;
+	case'#':
+		demoState->offsetPostion.x += 0.0001f;
+		break;
+	case'$':
+		demoState->offsetPostion.x -= 0.0001f;
+		break;
+
+	case '+':
+		demoState->zoomInOut.x += 0.1f;
+		break;
+	case '-':
+		demoState->zoomInOut.x -= 0.1f;
+		break;
+ 	}
 
 
 	// demo callback

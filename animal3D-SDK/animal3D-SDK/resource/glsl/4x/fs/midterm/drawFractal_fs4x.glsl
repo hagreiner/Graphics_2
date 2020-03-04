@@ -34,25 +34,26 @@ out vec4 rtFragColor;
 in vec2 vTexCoord;
 uniform double uTime;
 uniform vec2 u2DPosition;
+uniform vec3 uColorFractal1;
+uniform vec3 uColorFractal2;
+uniform vec3 uColorFractal3;
+uniform vec3 uColorFractal4;
+uniform vec2 uZoom;
 
-const int iterations = 100;
-const vec2 center = vec2(0.0);
-const vec3 color_1 = vec3(1.0, 1.0, 0.5);
-const vec3 color_2 = vec3(1.0, 0.2, 0.0);
-const vec3 color_3 = vec3(1.0, 0.5, 0.0);
-const vec3 color_4 = vec3(1.0, 1.0, 0.0);
-const vec3 color_5 = vec3(1.0, 0.5, 1.0);
-const vec3 color_6 = vec3(1.0, 1.0, 1.0);
-const vec3 color_7 = vec3(1.0, 1.0, 0.0);
-const vec3 color_8 = vec3(0.5, 1.0, 0.5);
-float zoom = 25;
+const int iterations = 1000;
+float zoom = 100;
 
 void main()
 {
-    float time = pow(2, float(uTime)/2.0);
+    //float time = pow(2, float(uTime)/2.0);
+    //zoom /= time;
+    //float xOffset = u2DPosition.x * (time * 0.1) + 0.5;
+    //float yOffset = u2DPosition.y * (time * 0.1) + 0.5;
+    
+    float time = pow(2, float(uZoom.x)/2.0);
     zoom /= time;
-    float xOffset = u2DPosition.x;
-    float yOffset = u2DPosition.y;
+    float xOffset = u2DPosition.x * (time * 0.1) + 0.5;
+    float yOffset = u2DPosition.y * (time * 0.1) + 0.5;
 
     float realTemp  = (vTexCoord.x - xOffset) * zoom; 
     float imagTemp  = (vTexCoord.y - yOffset) * zoom; 
@@ -73,10 +74,14 @@ void main()
 
     // color apply
     vec3 color;
-    if (combinedFloat < 5.0) { color = mix(color_3, color_4, fract(index*0.1)); }
-    else if (combinedFloat > 10.0 && combinedFloat < 20.0 ) { color = mix(color_4, color_5, float(index)*0.1); }
-    else if (combinedFloat > 20.0) { color = mix(color_7, color_8, float(index)*0.04); }
-    else { color = mix(color_1, color_2, float(index)*0.04); }
+    if (combinedFloat < 3.0) { color = mix(uColorFractal1, uColorFractal2, fract(float(index)*0.1)); }
+    //else if (combinedFloat > 10.0 && combinedFloat < 20.0 ) { color = mix(color_4, color_5, float(index)*0.1); }
+    //else if (combinedFloat > 20.0) { color = mix(color_7, color_8, float(index)*0.1); }
+    //else { color = mix(color_1, color_2, float(index)*0.1); }
+
+    else { 
+    color = mix(uColorFractal3, uColorFractal4, fract(float(index)*0.1)); 
+    }
 
     color = clamp(color, 0.0, 1.0);
     rtFragColor = vec4(color, 1.0);

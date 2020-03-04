@@ -104,7 +104,12 @@ extern "C"
 				uTime;						// time
 			a3i32
 				//midterm
-				u2DPosition;
+				u2DPosition,
+				uColorFractal1,
+				uColorFractal2,
+				uColorFractal3,
+				uColorFractal4,
+				uZoom;
 		};
 
 		// uniform blocks

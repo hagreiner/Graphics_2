@@ -74,8 +74,16 @@ void a3demo_render_controls(a3_DemoState const* demoState,
 	a3_DemoState_ModeName const demoMode = demoState->demoMode;
 
 	// demo mode
+	//a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
+	//	"Demo mode (%u / %u) ('</,' prev | next '>/.'): %s", demoMode + 1, demoState_mode_max, modeText[demoMode]);
+	
+	//midterm
 	a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
-		"Demo mode (%u / %u) ('</,' prev | next '>/.'): %s", demoMode + 1, demoState_mode_max, modeText[demoMode]);
+		"'+' and '-' to zoom in and out", demoMode + 1, demoState_mode_max, modeText[demoMode]);
+	a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
+		"WASD to move", demoMode + 1, demoState_mode_max, modeText[demoMode]);
+	a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
+		"!@#$ to tiny move", demoMode + 1, demoState_mode_max, modeText[demoMode]);
 
 	// draw controls for specific modes
 	switch (demoMode)
@@ -92,11 +100,14 @@ void a3demo_render_controls(a3_DemoState const* demoState,
 	}
 
 	// global controls
+	//midterm changes
 	textOffset = -0.8f;
+	//a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
+	//	"Toggle text display:        't' (toggle) | 'T' (alloc/dealloc) ");
+	//a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
+	//	"Reload all shader programs: 'P' ****CHECK CONSOLE FOR ERRORS!**** ");
 	a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
-		"Toggle text display:        't' (toggle) | 'T' (alloc/dealloc) ");
-	a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
-		"Reload all shader programs: 'P' ****CHECK CONSOLE FOR ERRORS!**** ");
+		"Press 'o' and 'b' to switch colors");
 }
 
 

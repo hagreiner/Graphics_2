@@ -481,6 +481,8 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			//midterm
 			a3_DemoStateShader
 				drawFractal_fs[1];
+			a3_DemoStateShader
+				drawSnow_fs[1];
 		};
 	} shaderList = {
 		{
@@ -545,6 +547,7 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			{ { { 0 },	"shdr-fs:draw-Phong-mul-fwd-mrt",	a3shader_fragment,	1,{ A3_DEMO_FS"07-curves/drawPhong_multi_forward_mrt_fs4x.glsl" } } },
 			//midterm
 			{ { { 0 },	"shdr-fs:draw-fractal",	a3shader_fragment,	1,{ A3_DEMO_FS"midterm/drawFractal_fs4x.glsl" } } },
+			{ { { 0 },	"shdr-fs:draw-fractal",	a3shader_fragment,	1,{ A3_DEMO_FS"midterm/drawSnow_fs4x.glsl" } } },
 		}
 	};
 	a3_DemoStateShader *const shaderListPtr = (a3_DemoStateShader *)(&shaderList), *shaderPtr;
@@ -731,6 +734,11 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-fractal");
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passTexcoordFractal_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawFractal_fs->shader);
+	//midterm
+	currentDemoProg = demoState->prog_drawKochSnow;
+	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-snow");
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passTexcoordFractal_vs->shader);
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawSnow_fs->shader);
 
 
 	// activate a primitive for validation
@@ -792,6 +800,11 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 		
 		//midterm
 		a3demo_setUniformDefaultVec4(currentDemoProg, u2DPosition, a3vec2_one.v);
+		a3demo_setUniformDefaultVec3(currentDemoProg, uColorFractal1, a3vec3_one.v);
+		a3demo_setUniformDefaultVec3(currentDemoProg, uColorFractal2, a3vec3_one.v);
+		a3demo_setUniformDefaultVec3(currentDemoProg, uColorFractal3, a3vec3_one.v);
+		a3demo_setUniformDefaultVec3(currentDemoProg, uColorFractal4, a3vec3_one.v);
+		a3demo_setUniformDefaultVec2(currentDemoProg, uZoom, a3vec2_one.v);
 
 		// common texture
 		a3demo_setUniformDefaultInteger(currentDemoProg, uTex_dm, defaultTexUnits + 0);

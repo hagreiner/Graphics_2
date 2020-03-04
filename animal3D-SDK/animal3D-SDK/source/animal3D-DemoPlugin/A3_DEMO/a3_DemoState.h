@@ -146,6 +146,11 @@ extern "C"
 
 		//midterm
 		a3vec2 offsetPostion;
+		a3vec3 baseColor1;
+		a3vec3 baseColor2;
+		a3vec3 baseColor3;
+		a3vec3 baseColor4;
+		a3vec2 zoomInOut;
 
 
 		//---------------------------------------------------------------------
@@ -363,7 +368,8 @@ extern "C"
 					prog_drawOverlays_tangents_wireframe[1];	// draw tangent bases using geometry shader
 				a3_DemoStateShaderProgram
 					prog_drawFractal[1];						//midterm
-
+				a3_DemoStateShaderProgram
+					prog_drawKochSnow[1];
 			};
 		};
 

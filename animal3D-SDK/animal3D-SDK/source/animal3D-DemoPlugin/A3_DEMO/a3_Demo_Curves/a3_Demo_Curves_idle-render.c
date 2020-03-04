@@ -148,28 +148,30 @@ void a3curves_render_controls(a3_DemoState const* demoState, a3_Demo_Curves cons
 	a3_Demo_Curves_TargetName const targetIndex = demoMode->targetIndex[pass];
 	a3_Demo_Curves_TargetName const targetCount = demoMode->targetCount[pass];
 	a3_Demo_Curves_InterpolationModeName const interp = demoMode->interp;
-
+	
 	// demo modes
-	a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
-		"    Pipeline (%u / %u) ('[' | ']'): %s", pipeline + 1, curves_pipeline_max, pipelineText[pipeline]);
-	a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
-		"    Display pass (%u / %u) ('(' | ')'): %s", pass + 1, curves_pass_max, passName[pass]);
-	a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
-		"        Target (%u / %u) ('{' | '}'): %s", targetIndex + 1, targetCount, targetText[pass][targetIndex]);
+	//a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
+	//	"    Pipeline (%u / %u) ('[' | ']'): %s", pipeline + 1, curves_pipeline_max, pipelineText[pipeline]);
+	//a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
+	//	"    Display pass (%u / %u) ('(' | ')'): %s", pass + 1, curves_pass_max, passName[pass]);
+	//a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
+	//	"        Target (%u / %u) ('{' | '}'): %s", targetIndex + 1, targetCount, targetText[pass][targetIndex]);
+	//
+	//// lighting modes
+	//a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
+	//	"    Rendering mode (%u / %u) ('j' | 'k'): %s", render + 1, curves_render_max, renderProgramName[render]);
+	//a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
+	//	"    Display mode (%u / %u) ('J' | 'K'): %s", display + 1, curves_display_max, displayProgramName[display]);
+	//a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
+	//	"    Active camera (%u / %u) ('c' prev | next 'v'): %s", activeCamera + 1, curves_camera_max, cameraText[activeCamera]);
+	//
+	//// additional modes
+	//a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
+	//	"    Interpolation mode (%u / %u) ('C' | 'V'): %s", interp + 1, curves_interp_max, interpText[interp]);
+	//a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
+	//	"        Interpolation data: PARAM %.3f = %.3f / %.3f; SEGMENT %u / %u", (a3f32)demoState->segmentParam, (a3f32)demoState->segmentTime, (a3f32)demoState->segmentDuration, (a3ui32)demoState->segmentIndex + 1, (a3ui32)demoState->segmentCount);
+	//midterm
 
-	// lighting modes
-	a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
-		"    Rendering mode (%u / %u) ('j' | 'k'): %s", render + 1, curves_render_max, renderProgramName[render]);
-	a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
-		"    Display mode (%u / %u) ('J' | 'K'): %s", display + 1, curves_display_max, displayProgramName[display]);
-	a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
-		"    Active camera (%u / %u) ('c' prev | next 'v'): %s", activeCamera + 1, curves_camera_max, cameraText[activeCamera]);
-
-	// additional modes
-	a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
-		"    Interpolation mode (%u / %u) ('C' | 'V'): %s", interp + 1, curves_interp_max, interpText[interp]);
-	a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
-		"        Interpolation data: PARAM %.3f = %.3f / %.3f; SEGMENT %u / %u", (a3f32)demoState->segmentParam, (a3f32)demoState->segmentTime, (a3f32)demoState->segmentDuration, (a3ui32)demoState->segmentIndex + 1, (a3ui32)demoState->segmentCount);
 }
 
 
@@ -767,13 +769,32 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 		// display color target with scene overlays
 		a3framebufferDeactivateSetViewport(a3fbo_depthDisable,
 			-demoState->frameBorder, -demoState->frameBorder, demoState->frameWidth, demoState->frameHeight);
+		//currentDrawable = demoState->draw_unitquad;
+		//currentDemoProgram = demoState->prog_drawFractal; //start midterm
+		//a3vertexDrawableActivate(currentDrawable);
+		//a3shaderProgramActivate(currentDemoProgram->program);
+		//a3framebufferBindColorTexture(currentWriteFBO, a3tex_unit00, 0);  //midterm change
+		//a3shaderUniformSendDouble(a3unif_single, currentDemoProgram->uTime, 1, &demoState->renderTimer->totalTime);
+		//a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->u2DPosition, 1, demoState->offsetPostion.v);
+		//a3shaderUniformSendFloat(a3unif_vec3, currentDemoProgram->uColorFractal1, 1, demoState->baseColor1.v);
+		//a3shaderUniformSendFloat(a3unif_vec3, currentDemoProgram->uColorFractal2, 1, demoState->baseColor2.v);
+		//a3shaderUniformSendFloat(a3unif_vec3, currentDemoProgram->uColorFractal3, 1, demoState->baseColor3.v);
+		//a3shaderUniformSendFloat(a3unif_vec3, currentDemoProgram->uColorFractal4, 1, demoState->baseColor4.v);
+		//a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uZoom, 1, demoState->zoomInOut.v);
+		//a3vertexDrawableRenderActive();
+
 		currentDrawable = demoState->draw_unitquad;
-		currentDemoProgram = demoState->prog_drawFractal; //start midterm
+		currentDemoProgram = demoState->prog_drawKochSnow; //start midterm
 		a3vertexDrawableActivate(currentDrawable);
 		a3shaderProgramActivate(currentDemoProgram->program);
 		a3framebufferBindColorTexture(currentWriteFBO, a3tex_unit00, 0);  //midterm change
 		a3shaderUniformSendDouble(a3unif_single, currentDemoProgram->uTime, 1, &demoState->renderTimer->totalTime);
 		a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->u2DPosition, 1, demoState->offsetPostion.v);
+		a3shaderUniformSendFloat(a3unif_vec3, currentDemoProgram->uColorFractal1, 1, demoState->baseColor1.v);
+		a3shaderUniformSendFloat(a3unif_vec3, currentDemoProgram->uColorFractal2, 1, demoState->baseColor2.v);
+		a3shaderUniformSendFloat(a3unif_vec3, currentDemoProgram->uColorFractal3, 1, demoState->baseColor3.v);
+		a3shaderUniformSendFloat(a3unif_vec3, currentDemoProgram->uColorFractal4, 1, demoState->baseColor4.v);
+		a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uZoom, 1, demoState->zoomInOut.v);
 		a3vertexDrawableRenderActive();
 	}
 
