@@ -40,26 +40,32 @@ uniform vec3 uColorFractal3;
 uniform vec3 uColorFractal4;
 uniform vec2 uZoom;
 
-const int iterations = 10;
-float zoom = 5;
+const int iterations = 25;
+float zoom = uZoom.x;
 
 void main()
 {
 	vec2 coordinates = vTexCoord; //make view easier -> reset this!!
-	float lineScale = 1.0;
+	float lineScale = 0.1;
 	vec3 color = vec3(0.0);
-	coordinates = vec2(coordinates.x - 0.5, coordinates.y - 0.5) * zoom; //centering, moving, zooming -> change variables
+
+	vec2 positionOffset = u2DPosition;
+	float xOffset = positionOffset.x + 0.5;
+	float yOffset = positionOffset.y + 0.5; 
+	coordinates = vec2(coordinates.x - xOffset, coordinates.y - yOffset) * zoom;
 	
-	float angle = 5.0/6.0 * 3.14;
+	float angle = 2.0/3.0 * 3.14;
 	vec2 normalized = vec2(sin(angle), cos(angle));
 
 	int index;
 	coordinates.x = abs(coordinates.x); //flip
 	coordinates.x += 0.5; //flip
+	coordinates.y = abs(coordinates.y); //flip
+	//coordinates.y += 0.5; //flip
 
     for (index = 0; index < iterations; ++index) {
 		coordinates *= 3.0;
-		coordinates.x -= 1.5;
+		coordinates.x -= 1.5+(float(uTime)/100);
 		lineScale *= 3.0;
 		
 		coordinates.x = abs(coordinates.x) - 0.5; //flip
@@ -70,7 +76,8 @@ void main()
 	float distance = length(coordinates - vec2(clamp(coordinates.x, -1.0, 1.0), 0));   
 	color += smoothstep(0.01, 0.0, distance/lineScale);
 	coordinates /= lineScale;
-	//color.rg += coordinates;
+	color.rb += coordinates;
 	rtFragColor = vec4(color, 1.0);
 }
 //https://www.youtube.com/watch?v=il_Qg9AqQkE&t=1410s
+//https://www.khanacademy.org/math/geometry-home/geometry-volume-surface-area/koch-snowflake/v/koch-snowflake-fractal

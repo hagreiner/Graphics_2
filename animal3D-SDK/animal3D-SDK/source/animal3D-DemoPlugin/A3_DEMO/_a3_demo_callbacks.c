@@ -534,9 +534,11 @@ A3DYLIBSYMBOL void a3demoCB_keyCharHold(a3_DemoState *demoState, a3i32 asciiKey)
 
 	case '+':
 		demoState->zoomInOut.x += 0.1f;
+		demoState->zoomInOut.y += 2.0f;
 		break;
 	case '-':
 		demoState->zoomInOut.x -= 0.1f;
+		demoState->zoomInOut.y -= 2.0f;
 		break;
  	}
 
