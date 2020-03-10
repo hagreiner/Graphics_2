@@ -49,28 +49,12 @@ void a3curves_init(a3_DemoState const* demoState, a3_Demo_Curves* demoMode)
 	demoMode->targetIndex[curves_passScene] = curves_scene_finalcolor;
 	demoMode->targetIndex[curves_passComposite] = curves_composite_finalcolor;
 	demoMode->targetIndex[curves_passBright_2] = curves_bright_finalcolor;
-	demoMode->targetIndex[curves_passBlurH_2] = curves_blur_finalcolor;
-	demoMode->targetIndex[curves_passBlurV_2] = curves_blur_finalcolor;
-	demoMode->targetIndex[curves_passBright_4] = curves_bright_finalcolor;
-	demoMode->targetIndex[curves_passBlurH_4] = curves_blur_finalcolor;
-	demoMode->targetIndex[curves_passBlurV_4] = curves_blur_finalcolor;
-	demoMode->targetIndex[curves_passBright_8] = curves_bright_finalcolor;
-	demoMode->targetIndex[curves_passBlurH_8] = curves_blur_finalcolor;
-	demoMode->targetIndex[curves_passBlurV_8] = curves_blur_finalcolor;
 	demoMode->targetIndex[curves_passBlend] = curves_display_finalcolor;
 
 	demoMode->targetCount[curves_passShadow] = curves_target_shadow_max;
 	demoMode->targetCount[curves_passScene] = curves_target_scene_max;
 	demoMode->targetCount[curves_passComposite] = curves_target_composite_max;
 	demoMode->targetCount[curves_passBright_2] = curves_target_bright_max;
-	demoMode->targetCount[curves_passBlurH_2] = curves_target_blur_max;
-	demoMode->targetCount[curves_passBlurV_2] = curves_target_blur_max;
-	demoMode->targetCount[curves_passBright_4] = curves_target_bright_max;
-	demoMode->targetCount[curves_passBlurH_4] = curves_target_blur_max;
-	demoMode->targetCount[curves_passBlurV_4] = curves_target_blur_max;
-	demoMode->targetCount[curves_passBright_8] = curves_target_bright_max;
-	demoMode->targetCount[curves_passBlurH_8] = curves_target_blur_max;
-	demoMode->targetCount[curves_passBlurV_8] = curves_target_blur_max;
 	demoMode->targetCount[curves_passBlend] = curves_target_display_max;
 
 	demoMode->interp = curves_interpNone;

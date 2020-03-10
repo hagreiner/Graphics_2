@@ -98,15 +98,7 @@ extern "C"
 
 		curves_passComposite,		// composite for post-processing stage
 
-		curves_passBright_2,		// bright pass for bloom (half screen size)
-		curves_passBlurH_2,			// horizontal blur for bloom (half screen size)
-		curves_passBlurV_2,			// horizontal blur for bloom (half screen size)
-		curves_passBright_4,		// bright pass for bloom (quarter screen size)
-		curves_passBlurH_4,			// horizontal blur for bloom (quarter screen size)
-		curves_passBlurV_4,			// horizontal blur for bloom (quarter screen size)
-		curves_passBright_8,		// bright pass for bloom (eighth screen size)
-		curves_passBlurH_8,			// horizontal blur for bloom (eighth screen size)
-		curves_passBlurV_8,			// horizontal blur for bloom (eighth screen size)
+		curves_passBright_2,		// horizontal blur for bloom (eighth screen size)
 		curves_passBlend,			// bloom composite pass
 
 		curves_pass_max

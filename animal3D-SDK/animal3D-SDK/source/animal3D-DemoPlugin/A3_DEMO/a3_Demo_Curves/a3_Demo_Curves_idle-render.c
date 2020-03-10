@@ -79,14 +79,6 @@ void a3curves_render_controls(a3_DemoState const* demoState, a3_Demo_Curves cons
 		"Pass: Render scene objects",
 		"Pass: Composite scene",
 		"Pass: Bright pass (1/2 frame)",
-		"Pass: Horizontal blur (1/2 frame)",
-		"Pass: Vertical blur (1/2 frame)",
-		"Pass: Bright pass (1/4 frame)",
-		"Pass: Horizontal blur (1/4 frame)",
-		"Pass: Vertical blur (1/4 frame)",
-		"Pass: Bright pass (1/8 frame)",
-		"Pass: Horizontal blur (1/8 frame)",
-		"Pass: Vertical blur (1/8 frame)",
 		"Pass: Bloom composite",
 	};
 	a3byte const* targetText_shadow[curves_target_shadow_max] = {
@@ -118,14 +110,6 @@ void a3curves_render_controls(a3_DemoState const* demoState, a3_Demo_Curves cons
 		targetText_scene,
 		targetText_composite,
 		targetText_bright,
-		targetText_blur,
-		targetText_blur,
-		targetText_bright,
-		targetText_blur,
-		targetText_blur,
-		targetText_bright,
-		targetText_blur,
-		targetText_blur,
 		targetText_composite,
 	};
 	a3byte const* interpText[curves_interp_max] = {
@@ -272,14 +256,6 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 		demoState->fbo_scene_c16d24s8_mrt,
 		demoState->fbo_composite_c16 + 2,
 		demoState->fbo_post_c16_2fr + 0,
-		demoState->fbo_post_c16_2fr + 1,
-		demoState->fbo_post_c16_2fr + 2,
-		demoState->fbo_post_c16_4fr + 0,
-		demoState->fbo_post_c16_4fr + 1,
-		demoState->fbo_post_c16_4fr + 2,
-		demoState->fbo_post_c16_8fr + 0,
-		demoState->fbo_post_c16_8fr + 1,
-		demoState->fbo_post_c16_8fr + 2,
 		demoState->fbo_composite_c16 + 0,
 	};
 
@@ -290,14 +266,7 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 		{ demoState->fbo_scene_c16d24s8_mrt, 0, },
 		{ demoState->fbo_composite_c16 + 2, 0, },
 		{ demoState->fbo_post_c16_2fr + 0, 0, },
-		{ demoState->fbo_post_c16_2fr + 1, 0, },
-		{ demoState->fbo_post_c16_2fr + 2, 0, },
-		{ demoState->fbo_post_c16_4fr + 0, 0, },
-		{ demoState->fbo_post_c16_4fr + 1, 0, },
-		{ demoState->fbo_post_c16_4fr + 2, 0, },
-		{ demoState->fbo_post_c16_8fr + 0, 0, },
-		{ demoState->fbo_post_c16_8fr + 1, 0, },
-		{ demoState->fbo_post_c16_8fr + 2, demoState->fbo_post_c16_4fr + 2, demoState->fbo_post_c16_2fr + 2, demoState->fbo_composite_c16 + 2, },
+		//{ demoState->fbo_post_c16_8fr + 2, demoState->fbo_post_c16_4fr + 2, demoState->fbo_post_c16_2fr + 2, demoState->fbo_composite_c16 + 2, },
 	};
 
 	// target info
@@ -524,7 +493,42 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 	//		image; composite with original scene to mix detail with light
 
 	// bright-pass half-size
-	currentDemoProgram = demoState->prog_drawTexture_brightPass;
+	currentDemoProgram = demoState->prog_drawFractal;
+	a3shaderProgramActivate(currentDemoProgram->program);
+
+	currentPass = curves_passComposite;
+	currentWriteFBO = writeFBO[currentPass];
+	currentReadFBO = readFBO[currentPass][0];
+	a3framebufferActivate(currentWriteFBO);
+	a3framebufferBindColorTexture(currentReadFBO, a3tex_unit00, 0);
+	a3shaderUniformSendDouble(a3unif_single, currentDemoProgram->uTime, 1, &demoState->renderTimer->totalTime);
+	a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->u2DPosition, 1, demoState->offsetPostion.v);
+	a3shaderUniformSendFloat(a3unif_vec3, currentDemoProgram->uColorFractal1, 1, demoState->baseColor1.v);
+	a3shaderUniformSendFloat(a3unif_vec3, currentDemoProgram->uColorFractal2, 1, demoState->baseColor2.v);
+	a3shaderUniformSendFloat(a3unif_vec3, currentDemoProgram->uColorFractal3, 1, demoState->baseColor3.v);
+	a3shaderUniformSendFloat(a3unif_vec3, currentDemoProgram->uColorFractal4, 1, demoState->baseColor4.v);
+	a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uZoom, 1, demoState->zoomInOut.v);
+	a3vertexDrawableRenderActive();
+	
+	// bright-pass half-size
+	currentDemoProgram = demoState->prog_drawKochSnow;
+	a3shaderProgramActivate(currentDemoProgram->program);
+
+	currentPass = curves_passBlend;
+	currentWriteFBO = writeFBO[currentPass];
+	currentReadFBO = readFBO[currentPass][0];
+	a3framebufferActivate(currentWriteFBO);
+	a3framebufferBindColorTexture(currentReadFBO, a3tex_unit00, 0);
+	a3shaderUniformSendDouble(a3unif_single, currentDemoProgram->uTime, 1, &demoState->renderTimer->totalTime);
+	a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->u2DPosition, 1, demoState->offsetPostion.v);
+	a3shaderUniformSendFloat(a3unif_vec3, currentDemoProgram->uColorFractal1, 1, demoState->baseColor1.v);
+	a3shaderUniformSendFloat(a3unif_vec3, currentDemoProgram->uColorFractal2, 1, demoState->baseColor2.v);
+	a3shaderUniformSendFloat(a3unif_vec3, currentDemoProgram->uColorFractal3, 1, demoState->baseColor3.v);
+	a3shaderUniformSendFloat(a3unif_vec3, currentDemoProgram->uColorFractal4, 1, demoState->baseColor4.v);
+	a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uZoom, 1, demoState->zoomInOut.v);
+	a3vertexDrawableRenderActive();
+
+	currentDemoProgram = demoState->prog_drawTexture;
 	a3shaderProgramActivate(currentDemoProgram->program);
 
 	currentPass = curves_passBright_2;
@@ -534,101 +538,13 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 	a3framebufferBindColorTexture(currentReadFBO, a3tex_unit00, 0);
 	a3vertexDrawableRenderActive();
 
-	// blur half-size
-	currentDemoProgram = demoState->prog_drawTexture_blurGaussian;
-	a3shaderProgramActivate(currentDemoProgram->program);
-	a3real2Set(pixelSize.v, a3recip((a3real)currentWriteFBO->frameWidth), a3recip((a3real)currentWriteFBO->frameHeight));
-	a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uSize, 1, pixelSize.v);
-
-	currentPass = curves_passBlurH_2;
-	currentWriteFBO = writeFBO[currentPass];
-	currentReadFBO = readFBO[currentPass][0];
-	a3framebufferActivate(currentWriteFBO);
-	a3framebufferBindColorTexture(currentReadFBO, a3tex_unit00, 0);
-	a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uAxis, 1, sampleAxisH.v);
-	a3vertexDrawableRenderActive();
-
-	currentPass = curves_passBlurV_2;
-	currentWriteFBO = writeFBO[currentPass];
-	currentReadFBO = readFBO[currentPass][0];
-	a3framebufferActivate(currentWriteFBO);
-	a3framebufferBindColorTexture(currentReadFBO, a3tex_unit00, 0);
-	a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uAxis, 1, sampleAxisV.v);
-	a3vertexDrawableRenderActive();
-
-	// bright-pass quarter-size
-	currentDemoProgram = demoState->prog_drawTexture_brightPass;
-	a3shaderProgramActivate(currentDemoProgram->program);
-
-	currentPass = curves_passBright_4;
-	currentWriteFBO = writeFBO[currentPass];
-	currentReadFBO = readFBO[currentPass][0];
-	a3framebufferActivate(currentWriteFBO);
-	a3framebufferBindColorTexture(currentReadFBO, a3tex_unit00, 0);
-	a3vertexDrawableRenderActive();
-
-	// blur quarter-size
-	currentDemoProgram = demoState->prog_drawTexture_blurGaussian;
-	a3shaderProgramActivate(currentDemoProgram->program);
-	a3real2Set(pixelSize.v, a3recip((a3real)currentWriteFBO->frameWidth), a3recip((a3real)currentWriteFBO->frameHeight));
-	a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uSize, 1, pixelSize.v);
-
-	currentPass = curves_passBlurH_4;
-	currentWriteFBO = writeFBO[currentPass];
-	currentReadFBO = readFBO[currentPass][0];
-	a3framebufferActivate(currentWriteFBO);
-	a3framebufferBindColorTexture(currentReadFBO, a3tex_unit00, 0);
-	a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uAxis, 1, sampleAxisH.v);
-	a3vertexDrawableRenderActive();
-
-	currentPass = curves_passBlurV_4;
-	currentWriteFBO = writeFBO[currentPass];
-	currentReadFBO = readFBO[currentPass][0];
-	a3framebufferActivate(currentWriteFBO);
-	a3framebufferBindColorTexture(currentReadFBO, a3tex_unit00, 0);
-	a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uAxis, 1, sampleAxisV.v);
-	a3vertexDrawableRenderActive();
-
-	// bright-pass eighth-size
-	currentDemoProgram = demoState->prog_drawTexture_brightPass;
-	a3shaderProgramActivate(currentDemoProgram->program);
-
-	currentPass = curves_passBright_8;
-	currentWriteFBO = writeFBO[currentPass];
-	currentReadFBO = readFBO[currentPass][0];
-	a3framebufferActivate(currentWriteFBO);
-	a3framebufferBindColorTexture(currentReadFBO, a3tex_unit00, 0);
-	a3vertexDrawableRenderActive();
-
-	// blur eighth-size
-	currentDemoProgram = demoState->prog_drawTexture_blurGaussian;
-	a3shaderProgramActivate(currentDemoProgram->program);
-	a3real2Set(pixelSize.v, a3recip((a3real)currentWriteFBO->frameWidth), a3recip((a3real)currentWriteFBO->frameHeight));
-	a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uSize, 1, pixelSize.v);
-
-	currentPass = curves_passBlurH_8;
-	currentWriteFBO = writeFBO[currentPass];
-	currentReadFBO = readFBO[currentPass][0];
-	a3framebufferActivate(currentWriteFBO);
-	a3framebufferBindColorTexture(currentReadFBO, a3tex_unit00, 0);
-	a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uAxis, 1, sampleAxisH.v);
-	a3vertexDrawableRenderActive();
-
-	currentPass = curves_passBlurV_8;
-	currentWriteFBO = writeFBO[currentPass];
-	currentReadFBO = readFBO[currentPass][0];
-	a3framebufferActivate(currentWriteFBO);
-	a3framebufferBindColorTexture(currentReadFBO, a3tex_unit00, 0);
-	a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uAxis, 1, sampleAxisV.v);
-	a3vertexDrawableRenderActive();
-
 	// bloom composite
-	currentDemoProgram = demoState->prog_drawTexture_blendScreen4;
-	a3shaderProgramActivate(currentDemoProgram->program);
+	//currentDemoProgram = demoState->prog_drawTexture_blendScreen4;
+	//a3shaderProgramActivate(currentDemoProgram->program);
 
-	currentPass = curves_passBlend;
-	currentWriteFBO = writeFBO[currentPass];
-	a3framebufferActivate(currentWriteFBO);
+	//currentPass = curves_passBright_8;
+	//currentWriteFBO = writeFBO[currentPass];
+	//a3framebufferActivate(currentWriteFBO);
 	for (i = 0, j = 4; i < j; ++i)
 		a3framebufferBindColorTexture(readFBO[currentPass][i], a3tex_unit00 + i, 0);
 	a3vertexDrawableRenderActive();
@@ -662,14 +578,6 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 		break;
 	case curves_passComposite:
 	case curves_passBright_2:
-	case curves_passBlurH_2:
-	case curves_passBlurV_2:
-	case curves_passBright_4:
-	case curves_passBlurH_4:
-	case curves_passBlurV_4:
-	case curves_passBright_8:
-	case curves_passBlurH_8:
-	case curves_passBlurV_8:
 	case curves_passBlend:
 		a3framebufferBindColorTexture(currentDisplayFBO, a3tex_unit00, targetIndex);
 		break;
@@ -769,33 +677,6 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 		// display color target with scene overlays
 		a3framebufferDeactivateSetViewport(a3fbo_depthDisable,
 			-demoState->frameBorder, -demoState->frameBorder, demoState->frameWidth, demoState->frameHeight);
-		//currentDrawable = demoState->draw_unitquad;
-		//currentDemoProgram = demoState->prog_drawFractal; //start midterm
-		//a3vertexDrawableActivate(currentDrawable);
-		//a3shaderProgramActivate(currentDemoProgram->program);
-		//a3framebufferBindColorTexture(currentWriteFBO, a3tex_unit00, 0);  //midterm change
-		//a3shaderUniformSendDouble(a3unif_single, currentDemoProgram->uTime, 1, &demoState->renderTimer->totalTime);
-		//a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->u2DPosition, 1, demoState->offsetPostion.v);
-		//a3shaderUniformSendFloat(a3unif_vec3, currentDemoProgram->uColorFractal1, 1, demoState->baseColor1.v);
-		//a3shaderUniformSendFloat(a3unif_vec3, currentDemoProgram->uColorFractal2, 1, demoState->baseColor2.v);
-		//a3shaderUniformSendFloat(a3unif_vec3, currentDemoProgram->uColorFractal3, 1, demoState->baseColor3.v);
-		//a3shaderUniformSendFloat(a3unif_vec3, currentDemoProgram->uColorFractal4, 1, demoState->baseColor4.v);
-		//a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uZoom, 1, demoState->zoomInOut.v);
-		//a3vertexDrawableRenderActive();
-
-		currentDrawable = demoState->draw_unitquad;
-		currentDemoProgram = demoState->prog_drawKochSnow; //start midterm
-		a3vertexDrawableActivate(currentDrawable);
-		a3shaderProgramActivate(currentDemoProgram->program);
-		a3framebufferBindColorTexture(currentWriteFBO, a3tex_unit00, 0);  //midterm change
-		a3shaderUniformSendDouble(a3unif_single, currentDemoProgram->uTime, 1, &demoState->renderTimer->totalTime);
-		a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->u2DPosition, 1, demoState->offsetPostion.v);
-		a3shaderUniformSendFloat(a3unif_vec3, currentDemoProgram->uColorFractal1, 1, demoState->baseColor1.v);
-		a3shaderUniformSendFloat(a3unif_vec3, currentDemoProgram->uColorFractal2, 1, demoState->baseColor2.v);
-		a3shaderUniformSendFloat(a3unif_vec3, currentDemoProgram->uColorFractal3, 1, demoState->baseColor3.v);
-		a3shaderUniformSendFloat(a3unif_vec3, currentDemoProgram->uColorFractal4, 1, demoState->baseColor4.v);
-		a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uZoom, 1, demoState->zoomInOut.v);
-		a3vertexDrawableRenderActive();
 	}
 
 	// hidden volumes
