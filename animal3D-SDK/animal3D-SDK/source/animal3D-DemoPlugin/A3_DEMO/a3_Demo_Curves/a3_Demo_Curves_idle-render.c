@@ -323,23 +323,23 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 	//		- capture depth
 
 	// select shadow FBO
-	currentPass = curves_passShadow;
-	currentWriteFBO = writeFBO[currentPass];
-	a3framebufferActivate(currentWriteFBO);
-
-	// clear
-	glClear(GL_DEPTH_BUFFER_BIT);
-
-	// draw objects inverted
-	glCullFace(GL_FRONT);
-	currentDemoProgram = demoState->prog_transform;
-	a3shaderProgramActivate(currentDemoProgram->program);
-	for (k = 0,
-		currentSceneObject = demoState->planeObject, endSceneObject = demoState->teapotObject;
-		currentSceneObject <= endSceneObject;
-		++k, ++currentSceneObject)
-		a3demo_drawModelSimple_activateModel(modelViewProjectionMat.m, activeShadowCaster->viewProjectionMat.m, currentSceneObject->modelMat.m, currentDemoProgram, drawable[k]);
-	glCullFace(GL_BACK);
+	//currentPass = curves_passShadow;
+	//currentWriteFBO = writeFBO[currentPass];
+	//a3framebufferActivate(currentWriteFBO);
+	//
+	//// clear
+	//glClear(GL_DEPTH_BUFFER_BIT);
+	//
+	//// draw objects inverted
+	//glCullFace(GL_FRONT);
+	//currentDemoProgram = demoState->prog_transform;
+	//a3shaderProgramActivate(currentDemoProgram->program);
+	//for (k = 0,
+	//	currentSceneObject = demoState->planeObject, endSceneObject = demoState->teapotObject;
+	//	currentSceneObject <= endSceneObject;
+	//	++k, ++currentSceneObject)
+	//	a3demo_drawModelSimple_activateModel(modelViewProjectionMat.m, activeShadowCaster->viewProjectionMat.m, currentSceneObject->modelMat.m, currentDemoProgram, drawable[k]);
+	//glCullFace(GL_BACK);
 
 
 	//-------------------------------------------------------------------------
@@ -361,18 +361,18 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 		a3demo_setSceneState(currentWriteFBO, demoState->displaySkybox);
 		break;
 	}
-
-
+	
+	
 	// optional stencil test before drawing objects
 	a3real4x4SetScale(modelMat.m, a3real_four);
 	if (demoState->stencilTest)
 		a3demo_drawStencilTest(modelViewProjectionMat.m, viewProjectionMat.m, modelMat.m, demoState->prog_drawColorUnif, demoState->draw_sphere);
 
 
-	// select program based on settings
+	//select program based on settings
 	currentDemoProgram = renderProgram[pipeline][render];
 	a3shaderProgramActivate(currentDemoProgram->program);
-
+	
 	// send shared data: 
 	//	- projection matrix
 	//	- light data
@@ -387,8 +387,8 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 	a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uColor, 1, skyblue);
 	a3textureActivate(demoState->tex_ramp_dm, a3tex_unit04);
 	a3textureActivate(demoState->tex_ramp_sm, a3tex_unit05);
-
-
+	
+	
 	// select pipeline algorithm
 	glDisable(GL_BLEND);
 	switch (pipeline)
@@ -399,12 +399,12 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 		currentReadFBO = demoState->fbo_shadow_d32;
 		a3framebufferBindDepthTexture(currentReadFBO, a3tex_unit06);
 		a3textureActivate(demoState->tex_earth_dm, a3tex_unit07);
-
+	
 		// send more common uniforms
 		a3shaderUniformSendInt(a3unif_single, currentDemoProgram->uLightCt, 1, &demoState->forwardLightCount);
 		a3shaderUniformBufferActivate(demoState->ubo_transformStack_model, 0);
 		a3shaderUniformBufferActivate(demoState->ubo_pointLight, 4);
-
+	
 		// individual object requirements: 
 		//	- modelviewprojection
 		//	- modelview
@@ -424,8 +424,8 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 	}	break;
 		// end forward scene pass
 	}
-
-
+	
+	
 	// stop using stencil
 	if (demoState->stencilTest)
 		glDisable(GL_STENCIL_TEST);
@@ -436,35 +436,35 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 	//	- activate composite framebuffer
 	//	- composite scene layers
 
-	currentPass = curves_passComposite;
-	currentWriteFBO = writeFBO[currentPass];
-	a3framebufferActivate(currentWriteFBO);
-
-	// composite skybox
-	currentDemoProgram = demoState->displaySkybox ? demoState->prog_drawTexture : demoState->prog_drawColorUnif;
-	a3demo_drawModelTexturedColored_invertModel(modelViewProjectionMat.m, viewProjectionMat.m, demoState->skyboxObject->modelMat.m, a3mat4_identity.m, currentDemoProgram, demoState->draw_skybox, demoState->tex_skybox_clouds, skyblue);
-	a3demo_enableCompositeBlending();
-
-	// draw textured quad with previous pass image on it
-	// repeat as necessary to complete composite
-	currentDrawable = demoState->draw_unitquad;
-	a3vertexDrawableActivate(currentDrawable);
-
-	switch (pipeline)
-	{
-	case curves_forward:
-		// use simple texturing program
-		currentDemoProgram = demoState->prog_drawTexture;
-		a3shaderProgramActivate(currentDemoProgram->program);
-		// scene (color)
-		currentReadFBO = readFBO[currentPass][0];
-		a3framebufferBindColorTexture(currentReadFBO, a3tex_unit00, 0);
-		break;
-	}
-	// reset other uniforms
-	a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uMVP, 1, a3mat4_identity.mm);
-	a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uAtlas, 1, a3mat4_identity.mm);
-	a3vertexDrawableRenderActive();
+	//currentPass = curves_passComposite;
+	//currentWriteFBO = writeFBO[currentPass];
+	//a3framebufferActivate(currentWriteFBO);
+	//
+	//// composite skybox
+	//currentDemoProgram = demoState->displaySkybox ? demoState->prog_drawTexture : demoState->prog_drawColorUnif;
+	//a3demo_drawModelTexturedColored_invertModel(modelViewProjectionMat.m, viewProjectionMat.m, demoState->skyboxObject->modelMat.m, a3mat4_identity.m, currentDemoProgram, demoState->draw_skybox, demoState->tex_skybox_clouds, skyblue);
+	//a3demo_enableCompositeBlending();
+	//
+	//// draw textured quad with previous pass image on it
+	//// repeat as necessary to complete composite
+	//currentDrawable = demoState->draw_unitquad;
+	//a3vertexDrawableActivate(currentDrawable);
+	//
+	//switch (pipeline)
+	//{
+	//case curves_forward:
+	//	// use simple texturing program
+	//	currentDemoProgram = demoState->prog_drawTexture;
+	//	a3shaderProgramActivate(currentDemoProgram->program);
+	//	// scene (color)
+	//	currentReadFBO = readFBO[currentPass][0];
+	//	a3framebufferBindColorTexture(currentReadFBO, a3tex_unit00, 0);
+	//	break;
+	//}
+	//// reset other uniforms
+	//a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uMVP, 1, a3mat4_identity.mm);
+	//a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uAtlas, 1, a3mat4_identity.mm);
+	//a3vertexDrawableRenderActive();
 
 
 	//-------------------------------------------------------------------------
@@ -530,7 +530,7 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 
 	currentDemoProgram = demoState->prog_drawTexture;
 	a3shaderProgramActivate(currentDemoProgram->program);
-
+	//blur for screen record: overlaying in video editing decreases pixelation
 	currentPass = curves_passBright_2;
 	currentWriteFBO = writeFBO[currentPass];
 	currentReadFBO = readFBO[currentPass][0];
@@ -567,9 +567,9 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 	// select output to display
 	switch (demoMode->pass)
 	{
-	case curves_passShadow:
-			a3framebufferBindDepthTexture(currentDisplayFBO, a3tex_unit00);
-		break;
+	//case curves_passShadow:
+	//		a3framebufferBindDepthTexture(currentDisplayFBO, a3tex_unit00);
+	//	break;
 	case curves_passScene:
 		if (currentDisplayFBO->color && (!currentDisplayFBO->depthStencil || targetIndex < targetCount - 1))
 			a3framebufferBindColorTexture(currentDisplayFBO, a3tex_unit00, targetIndex);
@@ -706,58 +706,7 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 		}
 
 		glCullFace(GL_BACK);
-
-
-		// draw curves
-		if (demoState->segmentCount)
-		{
-			a3ui32* kptr = &k;
-			currentDemoProgram = demoState->prog_drawCurveSegment;
-			a3shaderProgramActivate(currentDemoProgram->program);
-			k = demoMode->interp;
-			a3shaderUniformSendInt(a3unif_single, currentDemoProgram->uFlag, 1, kptr);
-			k = demoState->segmentIndex;
-			a3shaderUniformSendInt(a3unif_single, currentDemoProgram->uIndex, 1, kptr);
-			k = demoState->segmentCount;
-			a3shaderUniformSendInt(a3unif_single, currentDemoProgram->uCount, 1, kptr);
-			a3shaderUniformSendFloat(a3unif_single, currentDemoProgram->uTime, 1, &demoState->segmentParam);
-			a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uColor, 1, skyblue);
-			a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uMVP, 1, activeCamera->viewProjectionMat.mm);
-			a3shaderUniformBufferActivate(demoState->ubo_curveWaypoint, 4);
-			a3vertexDrawableActivateAndRenderInstanced(demoState->dummyDrawable, demoState->segmentCount);
-		}
 	}
-
-
-	// superimpose axes
-	// draw coordinate axes in front of everything
-	currentDemoProgram = demoState->prog_drawColorAttrib;
-	a3shaderProgramActivate(currentDemoProgram->program);
-	a3vertexDrawableActivate(demoState->draw_axes);
-
-	// center of world from current viewer
-	// also draw other viewer/viewer-like object in scene
-	if (demoState->displayWorldAxes && demoMode->pass != curves_passShadow)
-	{
-		a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uMVP, 1, viewProjectionMat.mm);
-		a3vertexDrawableRenderActive();
-	}
-
-	// individual objects
-	if (demoState->displayObjectAxes && demoMode->pass != curves_passShadow)
-	{
-		a3_DemoSceneObject const* axesObjects[] = {
-			demoState->planeObject, demoState->sphereObject, demoState->cylinderObject, demoState->torusObject, demoState->teapotObject,
-			demoState->mainLightObject, demoState->mainCameraObject,
-			0
-		}, ** axesObjectsItr = axesObjects;
-		for (currentSceneObject = *axesObjectsItr, 
-			endSceneObject = demoState->displayHiddenVolumes ? 0 : demoState->mainLightObject;
-			currentSceneObject != endSceneObject;
-			currentSceneObject = *(++axesObjectsItr))
-			a3demo_drawModelSimple(modelViewProjectionMat.m, viewProjectionMat.m, currentSceneObject->modelMat.m, currentDemoProgram);
-	}
-
 
 	// pipeline
 	if (demoState->displayPipeline)

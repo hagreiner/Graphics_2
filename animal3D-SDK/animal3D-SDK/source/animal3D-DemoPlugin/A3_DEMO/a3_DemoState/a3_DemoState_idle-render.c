@@ -84,6 +84,8 @@ void a3demo_render_controls(a3_DemoState const* demoState,
 		"WASD to move", demoMode + 1, demoState_mode_max, modeText[demoMode]);
 	a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
 		"!@#$ to tiny move", demoMode + 1, demoState_mode_max, modeText[demoMode]);
+	a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
+		"'(' and ')' to change scenes", demoMode + 1, demoState_mode_max, modeText[demoMode]);
 
 	// draw controls for specific modes
 	switch (demoMode)
