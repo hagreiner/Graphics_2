@@ -132,29 +132,6 @@ void a3curves_render_controls(a3_DemoState const* demoState, a3_Demo_Curves cons
 	a3_Demo_Curves_TargetName const targetIndex = demoMode->targetIndex[pass];
 	a3_Demo_Curves_TargetName const targetCount = demoMode->targetCount[pass];
 	a3_Demo_Curves_InterpolationModeName const interp = demoMode->interp;
-	
-	// demo modes
-	//a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
-	//	"    Pipeline (%u / %u) ('[' | ']'): %s", pipeline + 1, curves_pipeline_max, pipelineText[pipeline]);
-	//a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
-	//	"    Display pass (%u / %u) ('(' | ')'): %s", pass + 1, curves_pass_max, passName[pass]);
-	//a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
-	//	"        Target (%u / %u) ('{' | '}'): %s", targetIndex + 1, targetCount, targetText[pass][targetIndex]);
-	//
-	//// lighting modes
-	//a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
-	//	"    Rendering mode (%u / %u) ('j' | 'k'): %s", render + 1, curves_render_max, renderProgramName[render]);
-	//a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
-	//	"    Display mode (%u / %u) ('J' | 'K'): %s", display + 1, curves_display_max, displayProgramName[display]);
-	//a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
-	//	"    Active camera (%u / %u) ('c' prev | next 'v'): %s", activeCamera + 1, curves_camera_max, cameraText[activeCamera]);
-	//
-	//// additional modes
-	//a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
-	//	"    Interpolation mode (%u / %u) ('C' | 'V'): %s", interp + 1, curves_interp_max, interpText[interp]);
-	//a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
-	//	"        Interpolation data: PARAM %.3f = %.3f / %.3f; SEGMENT %u / %u", (a3f32)demoState->segmentParam, (a3f32)demoState->segmentTime, (a3f32)demoState->segmentDuration, (a3ui32)demoState->segmentIndex + 1, (a3ui32)demoState->segmentCount);
-	//midterm
 
 }
 
@@ -166,6 +143,7 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 {
 	// pointers
 	const a3_VertexDrawable* currentDrawable;
+	const a3_DemoPointLight* pointLight;
 	const a3_DemoStateShaderProgram* currentDemoProgram;
 
 	// framebuffers
@@ -240,7 +218,7 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 	// forward pipeline shader programs
 	const a3_DemoStateShaderProgram* renderProgram[curves_pipeline_max][curves_render_max] = {
 		{
-			demoState->prog_drawPhong_multi_forward_mrt,
+			demoState->prog_drawOnObject,
 		},
 	};
 
@@ -277,6 +255,10 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 	a3_Demo_Curves_TargetName const targetIndex = demoMode->targetIndex[pass], targetCount = demoMode->targetCount[pass];
 	a3_Demo_Curves_PassName currentPass;
 
+	a3f32 lightSz[demoStateMaxCount_lightObject];
+	a3f32 lightSzInvSq[demoStateMaxCount_lightObject];
+	a3vec4 lightPos[demoStateMaxCount_lightObject];
+	a3vec4 lightCol[demoStateMaxCount_lightObject];
 
 	// pixel size and effect axis
 	a3vec2 pixelSize = a3vec2_one;
@@ -298,13 +280,15 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 		-1.0f, -1.0f, -1.0f, 1.0f,
 	};
 
-	// final model matrix and full matrix stack
+	// changes here
 	a3mat4 viewProjectionMat = activeCamera->viewProjectionMat;
 	a3mat4 modelViewProjectionMat = viewProjectionMat;
 	a3mat4 modelMat = a3mat4_identity;
 	a3mat4 modelViewProjectionBiasMat_other, viewProjectionBiasMat_other = activeShadowCaster->viewProjectionMat;
 	a3mat4 projectionBiasMat = activeCamera->projectionMat, projectionBiasMat_inv = activeCamera->projectionMatInv;
 
+	a3mat4 viewMat = activeCameraObject->modelMatInv;
+	a3mat4 modelViewMat = a3mat4_identity;
 
 	// init
 	a3real4x4ConcatR(bias.m, viewProjectionBiasMat_other.m);
@@ -351,84 +335,110 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 	//		- capture color and depth
 
 	// select target framebuffer
+
+	//currentDemoProgram = demoState->prog_drawOnObject;
+	//a3shaderProgramActivate(currentDemoProgram->program);
+
 	currentPass = curves_passScene;
-	currentWriteFBO = writeFBO[currentPass];
+
+	// select target framebuffer
 	switch (pipeline)
 	{
 		// shading with MRT
-	case curves_forward:
+	case pipelines_forward:
 		// target scene framebuffer
-		a3demo_setSceneState(currentWriteFBO, demoState->displaySkybox);
+		currentWriteFBO = demoState->fbo_scene_c16d24s8_mrt;
+		a3framebufferActivate(currentWriteFBO);
+
+		// clear now, handle skybox later
+		glDisable(GL_STENCIL_TEST);
+		glDisable(GL_BLEND);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		break;
 	}
-	
-	
+
+
 	// optional stencil test before drawing objects
 	a3real4x4SetScale(modelMat.m, a3real_four);
 	if (demoState->stencilTest)
 		a3demo_drawStencilTest(modelViewProjectionMat.m, viewProjectionMat.m, modelMat.m, demoState->prog_drawColorUnif, demoState->draw_sphere);
 
 
-	//select program based on settings
-	currentDemoProgram = renderProgram[pipeline][render];
-	a3shaderProgramActivate(currentDemoProgram->program);
-	
-	// send shared data: 
-	//	- projection matrix
-	//	- light data
-	//	- activate shared textures including atlases if using
-	//	- shared animation data
-	a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uP, 1, activeCamera->projectionMat.mm);
-	a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uP_inv, 1, activeCamera->projectionMatInv.mm);
-	a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uPB, 1, projectionBiasMat.mm);
-	a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uPB_inv, 1, projectionBiasMat_inv.mm);
-	a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uAtlas, 1, a3mat4_identity.mm);
-	a3shaderUniformSendDouble(a3unif_single, currentDemoProgram->uTime, 1, &demoState->renderTimer->totalTime);
-	a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uColor, 1, skyblue);
-	a3textureActivate(demoState->tex_ramp_dm, a3tex_unit04);
-	a3textureActivate(demoState->tex_ramp_sm, a3tex_unit05);
-	
-	
-	// select pipeline algorithm
-	glDisable(GL_BLEND);
-	switch (pipeline)
+	// copy temp light data
+	for (k = 0, pointLight = demoState->forwardPointLight;
+		k < demoState->forwardLightCount;
+		++k, ++pointLight)
 	{
-		// scene pass using forward pipeline
-	case curves_forward: {
-		// activate shadow map and other relevant textures
-		currentReadFBO = demoState->fbo_shadow_d32;
-		a3framebufferBindDepthTexture(currentReadFBO, a3tex_unit06);
-		a3textureActivate(demoState->tex_earth_dm, a3tex_unit07);
-	
-		// send more common uniforms
-		a3shaderUniformSendInt(a3unif_single, currentDemoProgram->uLightCt, 1, &demoState->forwardLightCount);
-		a3shaderUniformBufferActivate(demoState->ubo_transformStack_model, 0);
-		a3shaderUniformBufferActivate(demoState->ubo_pointLight, 4);
-	
-		// individual object requirements: 
-		//	- modelviewprojection
-		//	- modelview
-		//	- modelview for normals
-		//	- per-object animation data
-		for (currentSceneObject = demoState->planeObject, endSceneObject = demoState->teapotObject,
-			j = (a3ui32)(currentSceneObject - demoState->sceneObject), k = 0;
-			currentSceneObject <= endSceneObject;
-			++j, ++k, ++currentSceneObject)
-		{
-			// send data and draw
-			a3textureActivate(texture_dm[k], a3tex_unit00);
-			a3textureActivate(texture_sm[k], a3tex_unit01);
-			a3shaderUniformSendInt(a3unif_single, currentDemoProgram->uIndex, 1, &j);
-			a3vertexDrawableActivateAndRender(drawable[k]);
-		}
-	}	break;
-		// end forward scene pass
+		lightSz[k] = pointLight->radius;
+		lightSzInvSq[k] = pointLight->radiusInvSq;
+		lightPos[k] = pointLight->viewPos;
+		lightCol[k] = pointLight->color;
 	}
-	
-	
+
+
+	// support multiple geometry passes
+	for (i = 0, j = 1; i < j; ++i)
+	{
+		// select forward algorithm
+		switch (i)
+		{
+			// forward pass
+		case 0: {
+			// select program based on settings
+			currentDemoProgram = renderProgram[pipeline][render];
+			a3shaderProgramActivate(currentDemoProgram->program);
+
+			// send shared data: 
+			//	- projection matrix
+			//	- light data
+			//	- activate shared textures including atlases if using
+			//	- shared animation data
+			a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uP, 1, activeCamera->projectionMat.mm);
+			a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uP_inv, 1, activeCamera->projectionMatInv.mm);
+			a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uAtlas, 1, a3mat4_identity.mm);
+			a3shaderUniformSendDouble(a3unif_single, currentDemoProgram->uTime, 1, &demoState->renderTimer->totalTime);
+			a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uColor, 1, skyblue);
+			a3shaderUniformSendInt(a3unif_single, currentDemoProgram->uLightCt, 1, &demoState->forwardLightCount);
+			a3shaderUniformSendFloat(a3unif_single, currentDemoProgram->uLightSz, demoState->forwardLightCount, lightSz);
+			a3shaderUniformSendFloat(a3unif_single, currentDemoProgram->uLightSzInvSq, demoState->forwardLightCount, lightSzInvSq);
+			a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uLightPos, demoState->forwardLightCount, lightPos->v);
+			a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uLightCol, demoState->forwardLightCount, lightCol->v);
+			a3textureActivate(demoState->tex_ramp_dm, a3tex_unit04);
+			a3textureActivate(demoState->tex_ramp_sm, a3tex_unit05);
+
+			// activate shadow map and other relevant textures
+			currentReadFBO = demoState->fbo_shadow_d32;
+			a3framebufferBindDepthTexture(currentReadFBO, a3tex_unit06);
+			a3textureActivate(demoState->tex_earth_dm, a3tex_unit07);
+
+			// individual object requirements: 
+			//	- modelviewprojection
+			//	- modelview
+			//	- modelview for normals
+			//	- per-object animation data
+			for (k = 0,
+				currentSceneObject = demoState->planeObject, endSceneObject = demoState->teapotObject;
+				currentSceneObject <= endSceneObject;
+				++k, ++currentSceneObject)
+			{
+				a3textureActivate(texture_dm[k], a3tex_unit00);
+				a3textureActivate(texture_sm[k], a3tex_unit01);
+				a3demo_drawModelLighting_bias_other(modelViewProjectionBiasMat_other.m, modelViewProjectionMat.m, modelViewMat.m, viewProjectionBiasMat_other.m, viewProjectionMat.m, viewMat.m, currentSceneObject->modelMat.m, currentDemoProgram, drawable[k], rgba4[k + 3].v);
+			}
+		}	break;
+			// end geometry pass
+		}
+	}
+
+
 	// stop using stencil
 	if (demoState->stencilTest)
 		glDisable(GL_STENCIL_TEST);
+
+
+	// draw grid aligned to world
+	if (demoState->displayGrid)
+		a3demo_drawModelSolidColor(modelViewProjectionMat.m, viewProjectionMat.m, demoState->gridTransform.m, demoState->prog_drawColorUnif, demoState->draw_grid, demoState->gridColor.v);
 
 
 	//-------------------------------------------------------------------------

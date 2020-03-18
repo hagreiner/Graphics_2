@@ -109,6 +109,9 @@
     <Filter Include="Resource Files\A3_DEMO\glsl\4x\fs\midterm">
       <UniqueIdentifier>{47fb1f3a-c09f-4c8d-81c5-9699ef75dcf9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\A3_DEMO\glsl\4x\vs\midterm">
+      <UniqueIdentifier>{c3d9001c-8493-4d83-a2d2-72087a93beab}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="_src_win\main_dll.c">
@@ -319,14 +322,17 @@
     <None Include="..\..\..\resource\glsl\4x\fs\midterm\drawFractal_fs4x.glsl">
       <Filter>Resource Files\A3_DEMO\glsl\4x\fs\midterm</Filter>
     </None>
-    <None Include="..\..\..\resource\glsl\4x\vs\02-shading\passTexcoordFractal_transform_vs4x.glsl">
-      <Filter>Resource Files\A3_DEMO\glsl\4x\vs\02-shading</Filter>
-    </None>
     <None Include="..\..\..\resource\glsl\4x\fs\midterm\drawSnow_fs4x.glsl">
       <Filter>Resource Files\A3_DEMO\glsl\4x\fs\midterm</Filter>
     </None>
     <None Include="..\..\..\resource\glsl\4x\fs\midterm\drawFractalOnObject_fs4x.glsl">
       <Filter>Resource Files\A3_DEMO\glsl\4x\fs\midterm</Filter>
+    </None>
+    <None Include="..\..\..\resource\glsl\4x\vs\midterm\passTexcoordFractal_transform_vs4x.glsl">
+      <Filter>Resource Files\A3_DEMO\glsl\4x\vs\midterm</Filter>
+    </None>
+    <None Include="..\..\..\resource\glsl\4x\vs\midterm\passLightingFractal_transform_vs4x.glsl">
+      <Filter>Resource Files\A3_DEMO\glsl\4x\vs\midterm</Filter>
     </None>
   </ItemGroup>
 </Project>

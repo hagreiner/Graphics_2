@@ -24,11 +24,6 @@
 
 #version 410
 
-// ****TO-DO: 
-//	1) declare uniform variable for texture; see demo code for hints
-//	2) declare inbound varying for texture coordinate
-//	3) sample texture using texture coordinate
-//	4) assign sample to output color
 
 out vec4 rtFragColor;
 in vec2 vTexCoord;

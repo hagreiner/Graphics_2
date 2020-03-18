@@ -431,9 +431,12 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			// 07-curves
 			a3_DemoStateShader
 				passTangentBasis_transform_instanced_vs[1];
+			
 			//midterm
 			a3_DemoStateShader
 				passTexcoordFractal_vs[1];
+			a3_DemoStateShader
+				passLightingFractal_vs[1];
 
 			// geometry shaders
 			// 07-curves
@@ -483,6 +486,8 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 				drawFractal_fs[1];
 			a3_DemoStateShader
 				drawSnow_fs[1];
+			a3_DemoStateShader
+				drawFractalOnObject_fs[1];
 		};
 	} shaderList = {
 		{
@@ -508,7 +513,10 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			{ { { 0 },	"shdr-vs:pass-biasedclip-inst",		a3shader_vertex  ,	1,{ A3_DEMO_VS"06-deferred/e/passBiasedClipCoord_transform_instanced_vs4x.glsl" } } },
 			// 07-curves
 			{ { { 0 },	"shdr-vs:pass-tangent-trans-inst",	a3shader_vertex  ,	1,{ A3_DEMO_VS"07-curves/passTangentBasis_transform_instanced_vs4x.glsl" } } },
-			{ { { 0 },	"shdr-vs:pass-tex-frac",	a3shader_vertex  ,	1,{ A3_DEMO_VS"02-shading/passTexcoordFractal_transform_vs4x.glsl" } } },
+			
+			//miderm
+			{ { { 0 },	"shdr-vs:pass-tex-frac",	a3shader_vertex  ,	1,{ A3_DEMO_VS"midterm/passTexcoordFractal_transform_vs4x.glsl" } } },
+			{ { { 0 },	"shdr-vs:pass-tex-frac",	a3shader_vertex  ,	1,{ A3_DEMO_VS"midterm/passLightingFractal_transform_vs4x.glsl" } } },
 
 			// gs
 			// 07-curves
@@ -545,9 +553,11 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			{ { { 0 },	"shdr-fs:draw-Phong-composite",		a3shader_fragment,	1,{ A3_DEMO_FS"06-deferred/e/drawPhongComposite_fs4x.glsl" } } },
 			// 07-curves
 			{ { { 0 },	"shdr-fs:draw-Phong-mul-fwd-mrt",	a3shader_fragment,	1,{ A3_DEMO_FS"07-curves/drawPhong_multi_forward_mrt_fs4x.glsl" } } },
+			
 			//midterm
 			{ { { 0 },	"shdr-fs:draw-fractal",	a3shader_fragment,	1,{ A3_DEMO_FS"midterm/drawFractal_fs4x.glsl" } } },
 			{ { { 0 },	"shdr-fs:draw-fractal",	a3shader_fragment,	1,{ A3_DEMO_FS"midterm/drawSnow_fs4x.glsl" } } },
+			{ { { 0 },	"shdr-fs:draw-fractal",	a3shader_fragment,	1,{ A3_DEMO_FS"midterm/drawFractalOnObject_fs4x.glsl" } } },
 		}
 	};
 	a3_DemoStateShader *const shaderListPtr = (a3_DemoStateShader *)(&shaderList), *shaderPtr;
@@ -739,6 +749,13 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-snow");
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passTexcoordFractal_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawSnow_fs->shader);
+	//midterm
+	currentDemoProg = demoState->prog_drawOnObject;
+	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-obj");
+	//a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passTexcoordFractal_vs->shader);
+	//a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawFractal_fs->shader);
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passLightingFractal_vs->shader);
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawFractalOnObject_fs->shader);
 
 
 	// activate a primitive for validation

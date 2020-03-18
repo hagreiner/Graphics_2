@@ -370,6 +370,8 @@ extern "C"
 					prog_drawFractal[1];						//midterm
 				a3_DemoStateShaderProgram
 					prog_drawKochSnow[1];
+				a3_DemoStateShaderProgram
+					prog_drawOnObject[1];
 			};
 		};
 

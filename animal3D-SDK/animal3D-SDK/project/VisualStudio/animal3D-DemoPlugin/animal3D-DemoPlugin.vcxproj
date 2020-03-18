@@ -252,13 +252,14 @@
     <None Include="..\..\..\resource\glsl\4x\gs\07-curves\drawCurveSegment_gs4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\gs\07-curves\drawOverlays_tangents_wireframe_gs4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\vs\02-shading\passLightingData_transform_vs4x.glsl" />
-    <None Include="..\..\..\resource\glsl\4x\vs\02-shading\passTexcoordFractal_transform_vs4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\vs\02-shading\passTexcoord_transform_vs4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\vs\04-multipass\passLightingData_shadowCoord_transform_vs4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\vs\06-deferred\passAtlasTexcoord_transform_vs4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\vs\06-deferred\passBiasedClipCoord_transform_instanced_vs4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\vs\06-deferred\passLightingData_transform_bias_vs4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\vs\07-curves\passTangentBasis_transform_instanced_vs4x.glsl" />
+    <None Include="..\..\..\resource\glsl\4x\vs\midterm\passLightingFractal_transform_vs4x.glsl" />
+    <None Include="..\..\..\resource\glsl\4x\vs\midterm\passTexcoordFractal_transform_vs4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\vs\passColor_transform_instanced_vs4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\vs\passColor_transform_vs4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\vs\passthru_transform_instanced_vs4x.glsl" />

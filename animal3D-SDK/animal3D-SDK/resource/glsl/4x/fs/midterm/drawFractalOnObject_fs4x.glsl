@@ -24,66 +24,76 @@
 
 #version 410
 
-// ****TO-DO: 
-//	1) declare uniform variable for texture; see demo code for hints
-//	2) declare inbound varying for texture coordinate
-//	3) sample texture using texture coordinate
-//	4) assign sample to output color
+layout (location = 0) out vec4 rtFragColor; // 0.5
 
-out vec4 rtFragColor;
+//0.6 
+layout(location = 1) out vec4 rtFragColorPosition;	
+layout(location = 2) out vec4 rtFragColorNormal;	
+layout(location = 3) out vec4 rtFragColorTexCoord;	
+layout(location = 4) out vec4 rtFragColorShadowCoord;
+layout(location = 5) out vec4 rtFragColorShadowTest;
+layout(location = 6) out vec4 rtFragColorDiffuseTotal;
+layout(location = 7) out vec4 rtFragColorSpecTotal;
+
+uniform sampler2D uTex_dm; //0.1
+uniform sampler2D uTex_sm; //0.1
+
+//0.2
+const int size = 12;
+uniform vec4 uLightPos[size];
+uniform int uLightCt;
+uniform float uLightSz[size];
+uniform float uLightSzInvSq[size];
+uniform vec4 uLightCol[size];
+
+//0.3
+in vec4 vNormal;
 in vec2 vTexCoord;
-uniform double uTime;
-uniform vec2 u2DPosition;
-uniform vec3 uColorFractal1;
-uniform vec3 uColorFractal2;
-uniform vec3 uColorFractal3;
-uniform vec3 uColorFractal4;
-uniform vec2 uZoom;
-
-const int iterations = 1000;
-float zoom = 100;
+in vec4 vViewPosition;
 
 void main()
 {
-    //float time = pow(2, float(uTime)/2.0);
-    //zoom /= time;
-    //float xOffset = u2DPosition.x * (time * 0.1) + 0.5;
-    //float yOffset = u2DPosition.y * (time * 0.1) + 0.5;
-    
-    float time = pow(2, float(uZoom.x)/2.0);
-    zoom /= time;
-    float xOffset = u2DPosition.x * (time * 0.1) + 0.5;
-    float yOffset = u2DPosition.y * (time * 0.1) + 0.5;
+	vec4 diffuseMap = texture(uTex_dm, vTexCoord);
+	vec4 specMap = texture(uTex_sm, vTexCoord);
 
-    float realTemp  = (vTexCoord.x - xOffset) * zoom; 
-    float imagTemp  = (vTexCoord.y - yOffset) * zoom; 
-    float RealFloat = realTemp;
-    float ImaginaryFloat = imagTemp;
+	float diffuseCoef = 0.0;
+	float specularCoef = 0.0;
+	vec3 color = vec3(0.0, 0.0, 0.0);
+	vec3 diffuseTotal;
+	vec3 specTotal;
+	
+	// https://www.tomdalling.com/blog/modern-opengl/07-more-lighting-ambient-specular-attenuation-gamma/
+	float attenuation = 0.0;
+	vec3 N = normalize(vNormal).xyz;
 
-    float combinedFloat = 0.0;
-    int index;
+	for (int index=0; index < size && index < uLightCt; index++){
+		vec3 L = normalize(uLightPos[index] - vViewPosition).xyz;
+		vec3 R = reflect(-L, N);
+		vec3 V = normalize(vViewPosition.xyz);
+		float lightDistance = length(uLightPos[index] - vViewPosition);
 
-    for (index = 0; index < iterations && combinedFloat < 4.0; ++index) {
-        float altReal = realTemp;
-        
-        realTemp = (altReal * altReal) - (imagTemp * imagTemp) + RealFloat;
-        imagTemp = 2.0 * (altReal * imagTemp) + ImaginaryFloat;
+		diffuseCoef = max(dot(N, L), 0);
+		specularCoef = pow(max(dot(R, V), 0), 30);
 
-        combinedFloat = (realTemp * realTemp) + (imagTemp * imagTemp);
-    }
+		attenuation = 1 / (1 + uLightSzInvSq[index] * (lightDistance * lightDistance));
+		
+		diffuseTotal += diffuseCoef * uLightCol[index].xyz;
+		specTotal += specularCoef * uLightCol[index].xyz;
 
-    // color apply
-    vec3 color;
-    if (combinedFloat < 3.0) { color = mix(uColorFractal1, uColorFractal2, fract(float(index)*0.1)); }
-    //else if (combinedFloat > 10.0 && combinedFloat < 20.0 ) { color = mix(color_4, color_5, float(index)*0.1); }
-    //else if (combinedFloat > 20.0) { color = mix(color_7, color_8, float(index)*0.1); }
-    //else { color = mix(color_1, color_2, float(index)*0.1); }
+		color += attenuation * ((diffuseCoef * diffuseMap.xyz * uLightCol[index].xyz * 0.7) + 
+		(specularCoef * specMap.xyz * uLightCol[index].xyz * 0.7));
+	}
+	color = vec3(1.0, 0.0, 0.0);
+	rtFragColor = vec4(color, 1.0);
+	//rtFragColor = vec4(1.0, 0.0, 0.0, 1.0);
 
-    else { 
-    color = mix(uColorFractal3, uColorFractal4, fract(float(index)*0.1)); 
-    }
+	rtFragColorPosition = vViewPosition;
+	rtFragColorNormal = vec4(N, 1.0);	
+	rtFragColorTexCoord = vec4(vTexCoord, 0.0, 1.0);	
+	
+	rtFragColorShadowCoord = vec4(1.0, 0.0, 0.0, 1.0);;
+	rtFragColorShadowTest = vec4(1.0, 0.0, 0.0, 1.0);;
 
-    color = clamp(color, 0.0, 1.0);
-    rtFragColor = vec4(color, 1.0);
+	rtFragColorSpecTotal = vec4(specTotal, 1.0);
+	rtFragColorDiffuseTotal = vec4(diffuseTotal, 1.0);
 }
-//https://community.khronos.org/t/simple-mandelbrot-shader/62721/11
