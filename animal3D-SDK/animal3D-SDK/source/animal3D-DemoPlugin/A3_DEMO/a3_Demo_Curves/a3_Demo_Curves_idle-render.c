@@ -340,6 +340,7 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 	//a3shaderProgramActivate(currentDemoProgram->program);
 
 	currentPass = curves_passScene;
+	//copied the stuff below from a previous assignment
 
 	// select target framebuffer
 	switch (pipeline)
@@ -403,6 +404,15 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 			a3shaderUniformSendFloat(a3unif_single, currentDemoProgram->uLightSzInvSq, demoState->forwardLightCount, lightSzInvSq);
 			a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uLightPos, demoState->forwardLightCount, lightPos->v);
 			a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uLightCol, demoState->forwardLightCount, lightCol->v);
+
+			//mine
+			a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->u2DPosition, 1, demoState->offsetPostion.v);
+			a3shaderUniformSendFloat(a3unif_vec3, currentDemoProgram->uColorFractal1, 1, demoState->baseColor1.v);
+			a3shaderUniformSendFloat(a3unif_vec3, currentDemoProgram->uColorFractal2, 1, demoState->baseColor2.v);
+			a3shaderUniformSendFloat(a3unif_vec3, currentDemoProgram->uColorFractal3, 1, demoState->baseColor3.v);
+			a3shaderUniformSendFloat(a3unif_vec3, currentDemoProgram->uColorFractal4, 1, demoState->baseColor4.v);
+			a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uZoom, 1, demoState->zoomInOut.v);
+
 			a3textureActivate(demoState->tex_ramp_dm, a3tex_unit04);
 			a3textureActivate(demoState->tex_ramp_sm, a3tex_unit05);
 

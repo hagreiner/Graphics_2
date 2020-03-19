@@ -24,21 +24,11 @@
 
 #version 410
 
-layout (location = 0) out vec4 rtFragColor; // 0.5
+layout (location = 0) out vec4 rtFragColor;
 
-//0.6 
-layout(location = 1) out vec4 rtFragColorPosition;	
-layout(location = 2) out vec4 rtFragColorNormal;	
-layout(location = 3) out vec4 rtFragColorTexCoord;	
-layout(location = 4) out vec4 rtFragColorShadowCoord;
-layout(location = 5) out vec4 rtFragColorShadowTest;
-layout(location = 6) out vec4 rtFragColorDiffuseTotal;
-layout(location = 7) out vec4 rtFragColorSpecTotal;
+uniform sampler2D uTex_dm;
+uniform sampler2D uTex_sm;
 
-uniform sampler2D uTex_dm; //0.1
-uniform sampler2D uTex_sm; //0.1
-
-//0.2
 const int size = 12;
 uniform vec4 uLightPos[size];
 uniform int uLightCt;
@@ -46,15 +36,62 @@ uniform float uLightSz[size];
 uniform float uLightSzInvSq[size];
 uniform vec4 uLightCol[size];
 
-//0.3
 in vec4 vNormal;
 in vec2 vTexCoord;
 in vec4 vViewPosition;
 
+//custom
+uniform double uTime;
+uniform vec2 u2DPosition;
+uniform vec3 uColorFractal1;
+uniform vec3 uColorFractal2;
+uniform vec3 uColorFractal3;
+uniform vec3 uColorFractal4;
+uniform vec2 uZoom;
+
+vec3 fractalObject(){    
+	const int iterations = 50;
+	float zoom = 100;
+
+    float time = pow(2, float(uZoom.x)/2.0);
+    zoom /= time;
+    float xOffset = u2DPosition.x * (time * 0.1) + 0.5;
+    float yOffset = u2DPosition.y * (time * 0.1) + 0.5;
+
+    float realTemp  = (vTexCoord.x - xOffset) * zoom; 
+    float imagTemp  = (vTexCoord.y - yOffset) * zoom; 
+    float RealFloat = realTemp;
+    float ImaginaryFloat = imagTemp;
+
+    float combinedFloat = 0.0;
+    int index;
+
+    for (index = 0; index < iterations && combinedFloat < 4.0; ++index) {
+        float altReal = realTemp;
+        
+        realTemp = (altReal * altReal) - (imagTemp * imagTemp) + RealFloat;
+        imagTemp = 2.0 * (altReal * imagTemp) + ImaginaryFloat;
+
+        combinedFloat = (realTemp * realTemp) + (imagTemp * imagTemp);
+    }
+
+    // color apply
+    vec3 color;
+    if (combinedFloat < 3.0) { color = mix(uColorFractal1, uColorFractal2, fract(float(index)*0.1)); }
+
+    else { 
+    color = mix(uColorFractal3, uColorFractal4, fract(float(index)*0.1)); 
+    }
+
+    color = clamp(color, 0.0, 1.0);
+    return color;
+}
+
 void main()
 {
-	vec4 diffuseMap = texture(uTex_dm, vTexCoord);
-	vec4 specMap = texture(uTex_sm, vTexCoord);
+	//vec4 diffuseMap = texture(uTex_dm, vTexCoord);
+	vec4 diffuseMap = vec4(fractalObject(), 1.0);
+	vec4 specMap = vec4(fractalObject(), 1.0);
 
 	float diffuseCoef = 0.0;
 	float specularCoef = 0.0;
@@ -69,7 +106,7 @@ void main()
 	for (int index=0; index < size && index < uLightCt; index++){
 		vec3 L = normalize(uLightPos[index] - vViewPosition).xyz;
 		vec3 R = reflect(-L, N);
-		vec3 V = normalize(vViewPosition.xyz);
+		vec3 V = normalize(-vViewPosition.xyz);
 		float lightDistance = length(uLightPos[index] - vViewPosition);
 
 		diffuseCoef = max(dot(N, L), 0);
@@ -83,17 +120,5 @@ void main()
 		color += attenuation * ((diffuseCoef * diffuseMap.xyz * uLightCol[index].xyz * 0.7) + 
 		(specularCoef * specMap.xyz * uLightCol[index].xyz * 0.7));
 	}
-	color = vec3(1.0, 0.0, 0.0);
 	rtFragColor = vec4(color, 1.0);
-	//rtFragColor = vec4(1.0, 0.0, 0.0, 1.0);
-
-	rtFragColorPosition = vViewPosition;
-	rtFragColorNormal = vec4(N, 1.0);	
-	rtFragColorTexCoord = vec4(vTexCoord, 0.0, 1.0);	
-	
-	rtFragColorShadowCoord = vec4(1.0, 0.0, 0.0, 1.0);;
-	rtFragColorShadowTest = vec4(1.0, 0.0, 0.0, 1.0);;
-
-	rtFragColorSpecTotal = vec4(specTotal, 1.0);
-	rtFragColorDiffuseTotal = vec4(diffuseTotal, 1.0);
 }
