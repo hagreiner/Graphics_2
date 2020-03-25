@@ -24,11 +24,6 @@
 
 #version 410
 
-// ****TO-DO: 
-//	1) declare uniform variable for texture; see demo code for hints
-//	2) declare inbound varying for texture coordinate
-//	3) sample texture using texture coordinate
-//	4) assign sample to output color
 
 out vec4 rtFragColor;
 in vec2 vTexCoord;
@@ -44,12 +39,8 @@ const int iterations = 1000;
 float zoom = 100;
 
 void main()
-{
-    //float time = pow(2, float(uTime)/2.0);
-    //zoom /= time;
-    //float xOffset = u2DPosition.x * (time * 0.1) + 0.5;
-    //float yOffset = u2DPosition.y * (time * 0.1) + 0.5;
-    
+{    
+    // position values
     float time = pow(2, float(uZoom.x)/2.0);
     zoom /= time;
     float xOffset = u2DPosition.x * (time * 0.1) + 0.5;
@@ -60,9 +51,11 @@ void main()
     float RealFloat = realTemp;
     float ImaginaryFloat = imagTemp;
 
+    // needed values for later when applying color
     float combinedFloat = 0.0;
     int index;
 
+    // fractal pattern loop
     for (index = 0; index < iterations && combinedFloat < 4.0; ++index) {
         float altReal = realTemp;
         
@@ -75,15 +68,9 @@ void main()
     // color apply
     vec3 color;
     if (combinedFloat < 3.0) { color = mix(uColorFractal1, uColorFractal2, fract(float(index)*0.1)); }
-    //else if (combinedFloat > 10.0 && combinedFloat < 20.0 ) { color = mix(color_4, color_5, float(index)*0.1); }
-    //else if (combinedFloat > 20.0) { color = mix(color_7, color_8, float(index)*0.1); }
-    //else { color = mix(color_1, color_2, float(index)*0.1); }
+    else { color = mix(uColorFractal3, uColorFractal4, fract(float(index)*0.1)); }
 
-    else { 
-    color = mix(uColorFractal3, uColorFractal4, fract(float(index)*0.1)); 
-    }
-
-    color = clamp(color, 0.0, 1.0);
-    rtFragColor = vec4(color, 1.0);
+    color = clamp(color, 0.0, 1.0); // clamp values so it is not blown out
+    rtFragColor = vec4(color, 1.0); // output color
 }
 //https://community.khronos.org/t/simple-mandelbrot-shader/62721/11

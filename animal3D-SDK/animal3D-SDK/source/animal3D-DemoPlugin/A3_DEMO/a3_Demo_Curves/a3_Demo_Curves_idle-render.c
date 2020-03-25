@@ -299,34 +299,6 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 
 
 	//-------------------------------------------------------------------------
-	// 0) PRE-SCENE PASS: shadow pass renders scene to depth-only
-	//	- activate shadow pass framebuffer
-	//	- draw scene
-	//		- clear depth buffer
-	//		- render shapes using appropriate shaders
-	//		- capture depth
-
-	// select shadow FBO
-	//currentPass = curves_passShadow;
-	//currentWriteFBO = writeFBO[currentPass];
-	//a3framebufferActivate(currentWriteFBO);
-	//
-	//// clear
-	//glClear(GL_DEPTH_BUFFER_BIT);
-	//
-	//// draw objects inverted
-	//glCullFace(GL_FRONT);
-	//currentDemoProgram = demoState->prog_transform;
-	//a3shaderProgramActivate(currentDemoProgram->program);
-	//for (k = 0,
-	//	currentSceneObject = demoState->planeObject, endSceneObject = demoState->teapotObject;
-	//	currentSceneObject <= endSceneObject;
-	//	++k, ++currentSceneObject)
-	//	a3demo_drawModelSimple_activateModel(modelViewProjectionMat.m, activeShadowCaster->viewProjectionMat.m, currentSceneObject->modelMat.m, currentDemoProgram, drawable[k]);
-	//glCullFace(GL_BACK);
-
-
-	//-------------------------------------------------------------------------
 	// 1) SCENE PASS: render scene with desired shader
 	//	- activate scene framebuffer
 	//	- draw scene
@@ -335,9 +307,6 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 	//		- capture color and depth
 
 	// select target framebuffer
-
-	//currentDemoProgram = demoState->prog_drawOnObject;
-	//a3shaderProgramActivate(currentDemoProgram->program);
 
 	currentPass = curves_passScene;
 	//copied the stuff below from a previous assignment
@@ -452,42 +421,6 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 
 
 	//-------------------------------------------------------------------------
-	// COMPOSITE PASS
-	//	- activate composite framebuffer
-	//	- composite scene layers
-
-	//currentPass = curves_passComposite;
-	//currentWriteFBO = writeFBO[currentPass];
-	//a3framebufferActivate(currentWriteFBO);
-	//
-	//// composite skybox
-	//currentDemoProgram = demoState->displaySkybox ? demoState->prog_drawTexture : demoState->prog_drawColorUnif;
-	//a3demo_drawModelTexturedColored_invertModel(modelViewProjectionMat.m, viewProjectionMat.m, demoState->skyboxObject->modelMat.m, a3mat4_identity.m, currentDemoProgram, demoState->draw_skybox, demoState->tex_skybox_clouds, skyblue);
-	//a3demo_enableCompositeBlending();
-	//
-	//// draw textured quad with previous pass image on it
-	//// repeat as necessary to complete composite
-	//currentDrawable = demoState->draw_unitquad;
-	//a3vertexDrawableActivate(currentDrawable);
-	//
-	//switch (pipeline)
-	//{
-	//case curves_forward:
-	//	// use simple texturing program
-	//	currentDemoProgram = demoState->prog_drawTexture;
-	//	a3shaderProgramActivate(currentDemoProgram->program);
-	//	// scene (color)
-	//	currentReadFBO = readFBO[currentPass][0];
-	//	a3framebufferBindColorTexture(currentReadFBO, a3tex_unit00, 0);
-	//	break;
-	//}
-	//// reset other uniforms
-	//a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uMVP, 1, a3mat4_identity.mm);
-	//a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uAtlas, 1, a3mat4_identity.mm);
-	//a3vertexDrawableRenderActive();
-
-
-	//-------------------------------------------------------------------------
 	// PREPARE FOR POST-PROCESSING
 	//	- double buffer swap (if applicable)
 	//	- ensure blending is disabled
@@ -558,13 +491,6 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 	a3framebufferBindColorTexture(currentReadFBO, a3tex_unit00, 0);
 	a3vertexDrawableRenderActive();
 
-	// bloom composite
-	//currentDemoProgram = demoState->prog_drawTexture_blendScreen4;
-	//a3shaderProgramActivate(currentDemoProgram->program);
-
-	//currentPass = curves_passBright_8;
-	//currentWriteFBO = writeFBO[currentPass];
-	//a3framebufferActivate(currentWriteFBO);
 	for (i = 0, j = 4; i < j; ++i)
 		a3framebufferBindColorTexture(readFBO[currentPass][i], a3tex_unit00 + i, 0);
 	a3vertexDrawableRenderActive();
@@ -587,9 +513,6 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 	// select output to display
 	switch (demoMode->pass)
 	{
-	//case curves_passShadow:
-	//		a3framebufferBindDepthTexture(currentDisplayFBO, a3tex_unit00);
-	//	break;
 	case curves_passScene:
 		if (currentDisplayFBO->color && (!currentDisplayFBO->depthStencil || targetIndex < targetCount - 1))
 			a3framebufferBindColorTexture(currentDisplayFBO, a3tex_unit00, targetIndex);

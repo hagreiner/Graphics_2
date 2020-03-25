@@ -29,10 +29,6 @@ out vec4 rtFragColor;
 in vec2 vTexCoord;
 uniform double uTime;
 uniform vec2 u2DPosition;
-uniform vec3 uColorFractal1;
-uniform vec3 uColorFractal2;
-uniform vec3 uColorFractal3;
-uniform vec3 uColorFractal4;
 uniform vec2 uZoom;
 
 const int iterations = 25;
@@ -40,10 +36,11 @@ float zoom = uZoom.x;
 
 void main()
 {
-	vec2 coordinates = vTexCoord; //make view easier -> reset this!!
+	vec2 coordinates = vTexCoord; //make view easier
 	float lineScale = 0.1;
 	vec3 color = vec3(0.0);
 
+	// position offset
 	vec2 positionOffset = u2DPosition;
 	float xOffset = positionOffset.x + 0.5;
 	float yOffset = positionOffset.y + 0.5; 
@@ -52,25 +49,28 @@ void main()
 	float angle = 2.0/3.0 * 3.14;
 	vec2 normalized = vec2(sin(angle), cos(angle));
 
+	// coordinate flip over axis
 	int index;
 	coordinates.x = abs(coordinates.x); //flip
 	coordinates.x += 0.5; //flip
 	coordinates.y = abs(coordinates.y); //flip
-	//coordinates.y += 0.5; //flip
 
+	// repeat and split the pattern
     for (index = 0; index < iterations; ++index) {
 		coordinates *= 3.0;
-		coordinates.x -= 1.5+(float(uTime)/100);
+		coordinates.x -= 1.5+(float(uTime)/100);	//separate over times
 		lineScale *= 3.0;
 		
 		coordinates.x = abs(coordinates.x) - 0.5; //flip
 		coordinates -= normalized * min(0.0, dot(coordinates, normalized)) * 2; 
 	}
 
-
+	// apply lines width change over distance
 	float distance = length(coordinates - vec2(clamp(coordinates.x, -1.0, 1.0), 0));   
 	color += smoothstep(0.01, 0.0, distance/lineScale);
 	coordinates /= lineScale;
+	
+	// add coordinates to output color
 	color.rb += coordinates;
 	rtFragColor = vec4(color, 1.0);
 }
