@@ -109,7 +109,9 @@ extern "C"
 				uColorFractal2,
 				uColorFractal3,
 				uColorFractal4,
-				uZoom;
+				uZoom,
+				uWidth,
+				uHeight;
 		};
 
 		// uniform blocks

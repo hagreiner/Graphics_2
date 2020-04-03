@@ -461,6 +461,8 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 	a3shaderUniformSendFloat(a3unif_vec3, currentDemoProgram->uColorFractal3, 1, demoState->baseColor3.v);
 	a3shaderUniformSendFloat(a3unif_vec3, currentDemoProgram->uColorFractal4, 1, demoState->baseColor4.v);
 	a3shaderUniformSendFloat(a3unif_vec2, currentDemoProgram->uZoom, 1, demoState->zoomInOut.v);
+	a3shaderUniformSendInt(a3unif_single, currentDemoProgram->uWidth, 1, &demoState->windowWidth);
+	a3shaderUniformSendInt(a3unif_single, currentDemoProgram->uHeight, 1, &demoState->windowHeight);
 	a3vertexDrawableRenderActive();
 	
 	// bright-pass half-size
