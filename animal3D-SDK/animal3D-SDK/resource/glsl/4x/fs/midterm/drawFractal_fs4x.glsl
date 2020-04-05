@@ -29,7 +29,7 @@ out vec4 rtFragColor;
 in vec2 vTexCoord;
 
 uniform int uHeight;
-unifotm int uWidth;
+uniform int uWidth;
 
 uniform double uTime;
 uniform vec2 u2DPosition;
