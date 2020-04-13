@@ -26,18 +26,23 @@
 #version 410
 
 layout (location = 0) in vec4 aPosition;
+uniform mat4 uMV;
+out vec4 vViewPosition;
 
-layout (location = 8) in vec4 aTexCoord;
+uniform mat4 uP;
 
+layout (location = 2) in vec4 aNormals;
+uniform mat4 uMV_nrm;
+out vec4 vNormal;
 
-uniform mat4 uAtlas;
-out vec2 vTexCoord; 
-
-uniform mat4 uMVP;
+layout (location = 8) in vec2 aTexCoord;
+out vec2 vTexCoord;
 
 void main()
 {
-	gl_Position = uMVP * aPosition;
-	vTexCoord = vec2(uAtlas * aTexCoord);
+	vViewPosition = uMV * aPosition;
+	gl_Position = uP * vViewPosition;
 
+	vNormal =  uMV_nrm * aNormals;
+	vTexCoord = aTexCoord; 
 }
