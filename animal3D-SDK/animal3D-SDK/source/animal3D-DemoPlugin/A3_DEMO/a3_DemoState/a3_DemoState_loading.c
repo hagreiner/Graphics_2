@@ -822,6 +822,8 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 		a3demo_setUniformDefaultVec3(currentDemoProg, uColorFractal3, a3vec3_one.v);
 		a3demo_setUniformDefaultVec3(currentDemoProg, uColorFractal4, a3vec3_one.v);
 		a3demo_setUniformDefaultVec2(currentDemoProg, uZoom, a3vec2_one.v);
+		a3demo_setUniformDefaultInteger(currentDemoProg, uHeight, defaultInt);
+		a3demo_setUniformDefaultInteger(currentDemoProg, uWidth, defaultInt);
 
 		// common texture
 		a3demo_setUniformDefaultInteger(currentDemoProg, uTex_dm, defaultTexUnits + 0);

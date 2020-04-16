@@ -28,6 +28,7 @@
 out vec4 rtFragColor;
 in vec2 vTexCoord;
 in vec4 vViewPosition;
+in vec4 vNormal;
 
 uniform int uHeight;
 uniform int uWidth;
@@ -39,22 +40,41 @@ uniform vec3 uColorFractal2;
 uniform vec3 uColorFractal3;
 uniform vec3 uColorFractal4;
 uniform vec2 uZoom;
+
 const int size = 12;
 uniform vec4 uLightPos[size];
+uniform int uLightCt;
+uniform float uLightSz[size];
+uniform float uLightSzInvSq[size];
+uniform vec4 uLightCol[size];
 
-const int iterations = 25;
+int iterations = 25;
 float zoom = 100;
 float BailLimit = 50.0;
 float Bias = 2.0;
 
 
-float convertDE(in vec3 pos, inout int iter){
+vec3 rotation(in vec3 pos, in float rot) {
+	float rotCos = cos(rot);
+	float rotSin = sin(rot);
+	//float xPos = pos.x * rotCos - pos.y * rotSin;
+	//float yPos = pos.x * rotSin + pos.y * rotCos;
+	//return vec3(xPos, pos.z, yPos);
+	mat3 rotX = mat3(1.0, 0.0, 0.0, 0.0, rotCos, rotSin, 0.0, -rotSin, rotCos);
+	mat3 rotY = mat3(rotCos, 0.0, -rotSin, 0.0, 1.0, 0.0, rotSin, 0.0, rotCos);
+	mat3 rotZ = mat3(rotCos, rotSin, 0.0, -rotSin, rotCos, 0.0, 0.0, 0.0, 1.0);
+	return rotX * rotY * rotZ * pos;
+}
+
+
+float convertDE(in vec3 pos, inout int iter) {
+	pos = rotation(pos, (float(uTime)));
     vec3 z = pos;
 	float dr = 1.0;
 	float r = 0;
 	float power = 8.0;
 	
-	for (int i = 0; i < iterations; i++) {
+	for (int iter = 0; iter < iterations; iter++) {
 		r = length(z);
 		if (r > BailLimit) {break;}
 		
@@ -87,25 +107,67 @@ vec3 calculateNormals(in vec3 pos) {
 }
 
 
+vec3 lighting(){
+	vec3 position;
+	vec3 L = vec3(0.0);
+	for (int index=0; index < size; index++){
+		L += normalize(uLightPos[index] - vViewPosition).xyz;
+	}
+	return (normalize(L - position));
+}
+
+
+vec3 Phong(){
+	vec3 position;
+	vec3 N = normalize(vNormal).xyz;
+	float diffuseCoef;
+	float specularCoef;
+	float attenuation;
+	vec3 color = vec3(0.0, 0.0, 0.0);
+	vec3 diffuseTotal;
+	vec3 specTotal;
+	vec3 diffuseMap = vec3(0.3, 0.56, 0.45);
+	vec3 specMap = vec3(0.43, 0.16, 0.85);
+	for (int index=0; index < size; index++){
+		vec3 L = normalize(uLightPos[index] - vViewPosition).xyz;
+		vec3 R = reflect(-L, N);
+		vec3 V = normalize(-vViewPosition.xyz);
+		float lightDistance = length(uLightPos[index] - vViewPosition);
+
+		diffuseCoef = max(dot(N, L), 0);
+		specularCoef = pow(max(dot(R, V), 0), 30);
+
+		attenuation = 1 / (1 + uLightSzInvSq[index] * (lightDistance * lightDistance));
+		
+		diffuseTotal += diffuseCoef * uLightCol[index].xyz;
+		specTotal += specularCoef * uLightCol[index].xyz;
+
+		color += attenuation * ((diffuseCoef * diffuseMap.xyz * uLightCol[index].xyz * 0.7) + 
+		(specularCoef * specMap.xyz * uLightCol[index].xyz * 0.7));
+	}
+	return color;
+}
+
+
 void main()
 {    
-    float zOffset = -2.5;
-	float xOffset = zOffset * 0.5 - 0.25;
-	vec3 offset = vec3(xOffset, xOffset, -0.5);
+	float minimumVal = 0.0001;
+	float time = pow(2, float(uZoom.x)/2.0);
+    zoom /= time;
+    float xOffset = u2DPosition.x * (time * 0.1) + 0.5;
+    float yOffset = u2DPosition.y * (time * 0.1) + 0.5;
 
-	vec2 uv = vTexCoord;
+	float xTemp  = (vTexCoord.x - xOffset) * zoom; 
+    float yTemp  = (vTexCoord.y - yOffset) * zoom; 
+
+    float zOffset = -2.5;
+
+	vec2 uv = vec2(xTemp, yTemp);
 	float screenRatio = float(uWidth) / float(uHeight);
 	uv.x *= screenRatio;
 	vec3 la = vec3(0.0, 0.0, 1.0);
 	
-	vec3 position;
-	vec3 L = vec3(0.0);
-	vec3 color = vec3(1.0, 0.7, 0.2);
-	vec3 color2 = vec3(0.0, 0.7, 0.2);
-	for (int index=0; index < size; index++){
-		L += normalize(uLightPos[index] - vViewPosition).xyz;
-	}
-	vec3 lights = normalize(L - position);
+	vec3 lights = lighting();
 	
     vec3 mandelbulbPos = vec3(uv, zOffset);
 	vec3 cameraPos = normalize(la - mandelbulbPos);
@@ -116,14 +178,26 @@ void main()
 	float totalDistance = 0.0;
 	float zDistance = 250.0;
 
-	for (int i = 0; i < iterations * 4; i++) {
-		if (zDistance > 0.0001){
+	for (int i = 0; i < (iterations * 4); i++) {
+		if (zDistance > minimumVal){
 			mandelbulb = mandelbulbPos + renderDistance * totalDistance;
-			zDistance = convertDE((mandelbulb + offset), iter);
+			zDistance = convertDE(mandelbulb, iter);
 			totalDistance += zDistance;
 		}
 	}
 
+	if(mandelbulb.x > 1.0 || mandelbulb.y > 1.0 || mandelbulb.z > 1.0 ) {
+		mandelbulb = vec3(0.0);
+	}
+	if(lights.x > 1.0 || lights.y > 1.0 || lights.z > 1.0 ) {
+		lights = vec3(0.0);
+	}
+
+	vec3 outColor = lights * mandelbulb;
+	
+	vec3 color = vec3(1.0, 0.7, 0.2);
+	vec3 color2 = vec3(0.0, 0.7, 0.2);
 	vec3 ramp = mix(color, color2, float(iter) / float(iterations));
-    rtFragColor = vec4(mandelbulb, 1.0); // output color
+
+    rtFragColor = vec4(outColor, 1.0); // output color
 }
