@@ -162,13 +162,19 @@ void main() {
 		lights = vec3(0.0);
 	}
 
-	vec3 outColor = vec3(1.0) - lights * mandelbulb;
-	//vec3 outColor = lights * mandelbulb;
-	
 	vec3 color = vec3(1.0, 0.7, 0.2);
 	vec3 color2 = vec3(0.0, 0.7, 0.2);
-	vec3 ramp = mix(color, color2, float(iter) / float(iterations));
-	//vec3 ramp = texture(uTex_ramp_sm, vec2(float(iter) / float(iterations))).xyz;
 
+	//vec3 outColor = vec3(1.0) - lights * mandelbulb;
+	vec3 outColor = lights * mandelbulb;
+	
+	vec3 ramp = mix(color, color2, float(iter) / float(iterations));
+	ramp -= vec3(1.15);
+	vec3 highlight = outColor + ramp;
+
+	outColor += highlight;
+
+	outColor = max(outColor, 0.0);
+    outColor = min(outColor, 1.0);
     rtFragColor = vec4(outColor, 1.0); // output color
 }
