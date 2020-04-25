@@ -466,6 +466,10 @@ void a3curves_render(a3_DemoState const* demoState, a3_Demo_Curves const* demoMo
 
 	a3textureActivate(demoState->tex_ramp_sm, a3tex_unit08);
 	a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uLightPos, demoState->forwardLightCount, lightPos->v);
+	a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uLightCol, demoState->forwardLightCount, lightCol->v);
+	a3shaderUniformSendInt(a3unif_single, currentDemoProgram->uLightCt, 1, &demoState->forwardLightCount);
+	a3shaderUniformSendFloat(a3unif_single, currentDemoProgram->uLightSz, demoState->forwardLightCount, lightSz);
+	a3shaderUniformSendFloat(a3unif_single, currentDemoProgram->uLightSzInvSq, demoState->forwardLightCount, lightSzInvSq);
 	a3vertexDrawableRenderActive();
 	
 	// bright-pass half-size
