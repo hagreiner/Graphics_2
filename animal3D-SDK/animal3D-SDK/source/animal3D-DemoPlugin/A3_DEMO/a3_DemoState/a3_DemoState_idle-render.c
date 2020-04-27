@@ -109,6 +109,8 @@ void a3demo_render_controls(a3_DemoState const* demoState,
 	//a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
 	//	"Reload all shader programs: 'P' ****CHECK CONSOLE FOR ERRORS!**** ");
 	a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
+		"Press 'g' to turn on and off post-processing (will not work if color is not activated)");
+	a3textDraw(demoState->text, textAlign, textOffset += textOffsetDelta, textDepth, col.r, col.g, col.b, col.a,
 		"Press 'o' and 'b' to switch colors");
 }
 

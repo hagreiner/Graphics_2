@@ -492,6 +492,8 @@ A3DYLIBSYMBOL void a3demoCB_keyCharPress(a3_DemoState *demoState, a3i32 asciiKey
 		demoState->baseColor4.y = 0.2f;
 		demoState->baseColor4.z = 1.0f;
 		break;
+	case 'g':
+		demoState->zoomInOut.y += 1.0f;
 	}
 
 	// demo callback
@@ -534,11 +536,9 @@ A3DYLIBSYMBOL void a3demoCB_keyCharHold(a3_DemoState *demoState, a3i32 asciiKey)
 
 	case '+':
 		demoState->zoomInOut.x += 0.1f;
-		demoState->zoomInOut.y += 2.0f;
 		break;
 	case '-':
 		demoState->zoomInOut.x -= 0.1f;
-		demoState->zoomInOut.y -= 2.0f;
 		break;
  	}
 
